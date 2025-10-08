@@ -1,9 +1,13 @@
-import Image from "next/image";
+"use client";
+
+import Hero from "@/components/Hero";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 
 export default function Home() {
   return (
     <div>
-      <h1>Hello World</h1>
+      <ThemeToggle />
+      <Hero />
     </div>
   );
 }
