@@ -15,7 +15,7 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <div className="fixed top-4 right-4 z-50 flex gap-2">
-        <Button variant="outline" size="sm">
+        <Button variant="outline">
           <i className="ri-moon-fill text-primary"></i>
         </Button>
       </div>
@@ -26,13 +26,12 @@ export function ThemeToggle() {
     <div className="fixed top-4 right-4 z-50 flex gap-2">
       <Button
         variant="ghost"
-        size="sm"
         onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       >
         {theme === "dark" ? (
-          <i className="ri-sun-fill"></i>
+          <i className="ri-sun-fill scale-[1.4]"></i>
         ) : (
-          <i className="ri-moon-fill text-primary"></i>
+          <i className="ri-moon-fill scale-[1.4] text-primary"></i>
         )}
       </Button>
     </div>
