@@ -14,32 +14,26 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="fixed top-4 left-4 z-50 flex gap-2">
+      <div className="fixed top-4 right-4 z-50 flex gap-2">
         <Button variant="outline" size="sm">
-          Light
-        </Button>
-        <Button variant="outline" size="sm">
-          Dark
+          <i className="ri-moon-fill text-primary"></i>
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="fixed top-4 left-4 z-50 flex gap-2">
+    <div className="fixed top-4 right-4 z-50 flex gap-2">
       <Button
-        variant={theme === "light" ? "default" : "outline"}
+        variant="ghost"
         size="sm"
-        onClick={() => setTheme("light")}
+        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       >
-        Light
-      </Button>
-      <Button
-        variant={theme === "dark" ? "default" : "outline"}
-        size="sm"
-        onClick={() => setTheme("dark")}
-      >
-        Dark
+        {theme === "dark" ? (
+          <i className="ri-sun-fill"></i>
+        ) : (
+          <i className="ri-moon-fill text-primary"></i>
+        )}
       </Button>
     </div>
   );
