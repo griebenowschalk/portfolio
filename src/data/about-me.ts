@@ -1,6 +1,6 @@
-import { Achievements } from "@/types/about-me";
+import { Achievement } from "@/types/about-me";
 
-export const achievements: Achievements[] = [
+export const achievements: Achievement[] = [
   {
     number: 300,
     title: "Github Repos",

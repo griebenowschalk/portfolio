@@ -1,4 +1,4 @@
-export interface Achievements {
+export interface Achievement {
   number: number;
   title: string;
   description: string;
@@ -6,5 +6,5 @@ export interface Achievements {
 }
 
 export interface AboutMeConfig {
-  achievements: Achievements[];
+  achievements: Achievement[];
 }

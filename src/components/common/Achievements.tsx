@@ -1,7 +1,7 @@
-import { Achievements } from "@/types/about-me";
+import { Achievement } from "@/types/about-me";
 import { motion, useMotionValue } from "framer-motion";
 
-const Achievements = ({ icon, number, title }: Achievements) => {
+const Achievements = ({ icon, number, title }: Achievement) => {
   const numberValue = useMotionValue(0);
 
   const count = (amount: number) => {
