@@ -1,17 +1,19 @@
-import { Github, Linkedin } from "lucide-react";
 import { SocialLink } from "@/types/social";
 
 export const socialLinks: SocialLink[] = [
   {
     name: "LinkedIn",
-    icon: Linkedin,
+    iconClass: "ri-linkedin-fill",
     href: "https://linkedin.com/in/griebenowschalk",
-    colorStyle: "hover:bg-foreground hover:text-background",
   },
   {
     name: "GitHub",
-    icon: Github,
+    iconClass: "ri-github-fill",
     href: "https://github.com/griebenowschalk",
-    colorStyle: "hover:bg-foreground hover:text-background",
+  },
+  {
+    name: "Email",
+    iconClass: "ri-mail-fill",
+    href: "mailto:griebenowschalk@gmail.com",
   },
 ];

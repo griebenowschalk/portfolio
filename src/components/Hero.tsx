@@ -58,7 +58,7 @@ const Hero = () => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div>
+      <div className="flex flex-col gap-4 items-center justify-center">
         <div className="flex flex-col gap-4 items-center justify-center gap-y-3 font-semibold capitalize">
           <motion.div
             className="flex flex-col items-center justify-center gap-y-3 transition-transform duration-100 ease-in-out"
@@ -97,25 +97,27 @@ const Hero = () => {
             I am a software engineer
           </p>
         </div>
-        <div className="flex gap-4 items-center justify-center sm:text-2xl">
+        <div className="flex gap-5 items-center justify-center sm:text-2xl">
           {socialLinks.map((iconData) => {
-            const IconComponent = iconData.icon;
             return (
               <a
                 href={iconData.href}
                 key={iconData.name}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`p-1 rounded-sm text-2xl transition-colors duration-200 hover:scale-110 ${iconData.colorStyle}`}
+                className={`p-1 rounded-sm text-2xl transition-all duration-200 text-primary hover:bg-primary 
+                  hover:text-primary-foreground dark:hover:bg-primary/30 focus-visible:outline-none 
+                  focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 
+                  focus-visible:ring-offset-background hover:scale-110`}
               >
-                <IconComponent />
+                <i className={`${iconData.iconClass}`}></i>
               </a>
             );
           })}
         </div>
         <Button
-          className="mx-auto mt-4 block w-max px-3 py-1 font-light bg-secondary 
-          text-secondary-foreground tracking-wider capitalize hover:bg-secondary/90 transition-colors cursor-pointer"
+          className="mx-auto block w-max px-3 py-1 bg-primary 
+          text-primary-foreground tracking-wider capitalize hover:bg-primary/80 transition-colors cursor-pointer"
           onMouseEnter={() => setButtonHover(true)}
           onMouseLeave={() => setButtonHover(false)}
         >

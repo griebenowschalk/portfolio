@@ -1,10 +1,7 @@
-import { ComponentType } from "react";
-
 export interface SocialLink {
   name: string;
-  icon: ComponentType;
+  iconClass: string;
   href: string;
-  colorStyle: string;
 }
 
 export interface SocialLinksConfig {
