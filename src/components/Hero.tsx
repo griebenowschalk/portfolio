@@ -59,7 +59,12 @@ const Hero = () => {
       onMouseLeave={handleMouseLeave}
     >
       <div className="flex flex-col gap-4 items-center justify-center">
-        <div className="flex flex-col gap-4 items-center justify-center gap-y-3 font-semibold capitalize">
+        <motion.div
+          initial={{ opacity: 0, y: -100 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="flex flex-col gap-4 items-center justify-center gap-y-3 font-semibold capitalize"
+        >
           <motion.div
             className="flex flex-col items-center justify-center gap-y-3 transition-transform duration-100 ease-in-out"
             style={{
@@ -96,8 +101,13 @@ const Hero = () => {
           <p className="text-lg text-center tracking-wider text-muted-foreground">
             I am a software engineer
           </p>
-        </div>
-        <div className="flex gap-5 items-center justify-center sm:text-2xl">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="flex gap-5 items-center justify-center sm:text-2xl"
+        >
           {socialLinks.map((iconData) => {
             return (
               <a
@@ -114,15 +124,21 @@ const Hero = () => {
               </a>
             );
           })}
-        </div>
-        <Button
-          className="mx-auto block w-max px-3 py-1 bg-primary 
-          text-primary-foreground tracking-wider capitalize hover:bg-primary/80 transition-colors cursor-pointer"
-          onMouseEnter={() => setButtonHover(true)}
-          onMouseLeave={() => setButtonHover(false)}
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.7 }}
         >
-          {buttonHover ? "Talk to me" : "Talk to me"}
-        </Button>
+          <Button
+            className="mx-auto block w-max px-3 py-1 bg-primary 
+          text-primary-foreground tracking-wider capitalize hover:bg-primary/80 transition-colors cursor-pointer"
+            onMouseEnter={() => setButtonHover(true)}
+            onMouseLeave={() => setButtonHover(false)}
+          >
+            {"Talk to me"}
+          </Button>
+        </motion.div>
       </div>
     </div>
   );

@@ -5,10 +5,11 @@ import Heading from "./common/Heading";
 import Image from "next/image";
 import { aboutText, achievements } from "@/data/about-me";
 import { Button } from "./ui/button";
+import Container from "./common/Container";
 
 const About = () => {
   return (
-    <div className="min-h-screen flex flex-col gap-y-10 items-center justify-center">
+    <Container>
       <Heading title="About Me" />
       <div className="w-full flex items-center justify-between md:justify-center">
         <Image
@@ -40,7 +41,7 @@ const About = () => {
           <Achievements key={achievement.number} {...achievement} />
         ))}
       </div>
-    </div>
+    </Container>
   );
 };
 
