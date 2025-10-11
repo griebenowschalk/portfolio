@@ -7,7 +7,7 @@ import { questions } from "@/data/questions";
 
 const Questions = () => {
   return (
-    <Container className="py-20">
+    <Container className="py-20" id="questions">
       <Heading title="Questions & Answers" />
       <div>
         <ul className="flex flex-col gap-y-3">

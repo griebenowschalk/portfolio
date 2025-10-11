@@ -35,7 +35,7 @@ const Projects = () => {
       : projectsData.filter((p) => p.tags.includes(projectsButtons[index]));
 
   return (
-    <Container className="items-start justify-start gap-y-0">
+    <Container id="projects" className="items-start justify-start gap-y-0">
       <Heading title="Projects" />
       <div className="flex flex-wrap items-center justify-start gap-4 py-10">
         {projectsButtons.map((button, i) => (

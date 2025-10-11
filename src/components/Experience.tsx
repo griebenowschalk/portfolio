@@ -20,7 +20,7 @@ const Experience = () => {
 
   const scrollY = useSpring(scrollYProgress, { stiffness: 200, damping: 20 });
   return (
-    <Container className="relative">
+    <Container className="relative" id="experience">
       <Heading title="Experience & Education" />
       <div className="relative w-full py-5 md:py-10">
         {/* Center line */}
@@ -90,7 +90,7 @@ const Experience = () => {
           ))}
         </div>
 
-        <div className="hidden lg:block lg:justify-self-start absolute right-10 -top-32">
+        <div className="hidden lg:block lg:justify-self-start absolute right-0 -top-32">
           <Image
             src="/education.png"
             alt="Education"

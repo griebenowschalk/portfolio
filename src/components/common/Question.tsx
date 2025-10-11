@@ -53,7 +53,7 @@ const Question = ({ question, answer, index = 0 }: QuestionsData) => {
             delay: show ? 0.2 : 0,
           },
         }}
-        className="pl-5 text-muted-foreground text-md tracking-wider"
+        className="box-border origin-top pl-5 text-muted-foreground text-md tracking-wider"
       >
         {answer}
       </motion.p>

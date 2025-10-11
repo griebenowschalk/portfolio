@@ -9,7 +9,7 @@ import Container from "./common/Container";
 
 const About = () => {
   return (
-    <Container>
+    <Container id="about">
       <Heading title="About Me" />
       <div className="w-full flex items-center justify-between md:justify-center">
         <Image

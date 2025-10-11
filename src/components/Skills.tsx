@@ -22,7 +22,7 @@ const Skills = () => {
   };
 
   return (
-    <Container>
+    <Container id="skills">
       <Heading title="Skills" />
 
       <div className="w-full flex flex-wrap items-start gap-x-7 lg:gap-y-10 gap-y-6">
