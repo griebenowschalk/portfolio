@@ -19,7 +19,7 @@ const About = () => {
           height={400}
           className="hidden md:block w-[300px] lg:w-[200px]"
         />
-        <div className="relative max-w-[800px] rounded-xl bg-card p-5 text-justify">
+        <div className="relative max-w-[800px] rounded-xl bg-card p-5 text-justify border border-accent">
           <span className="hidden md:block absolute -left-5 top-10 scale-[2.5] text-muted-foreground">
             <i className="ri-arrow-left-s-fill"></i>
           </span>
