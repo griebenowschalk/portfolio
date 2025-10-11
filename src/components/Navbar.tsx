@@ -1,6 +1,6 @@
 import { navbar } from "@/data/navbar";
 
-const Navbar = ({ id }: { id: string }) => {
+const Navbar = ({ id }: { id?: string }) => {
   return (
     <div
       className="w-[70] h-full fixed left-0 top-0 flex flex-col 
