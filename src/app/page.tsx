@@ -4,6 +4,9 @@ import Hero from "@/components/Hero";
 import About from "@/components/About";
 import Experience from "@/components/Experience";
 import { ThemeToggle } from "@/components/common/theme-toggle";
+import Skills from "@/components/Skills";
+import Projects from "@/components/Projects";
+import Questions from "@/components/Questions";
 
 export default function Home() {
   return (
@@ -13,6 +16,9 @@ export default function Home() {
         <Hero />
         <About />
         <Experience />
+        <Skills />
+        <Projects />
+        <Questions />
       </div>
     </>
   );
