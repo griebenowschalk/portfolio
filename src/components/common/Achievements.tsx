@@ -26,13 +26,16 @@ const Achievements = ({ icon, number, title }: Achievement) => {
         <i className={icon}></i>
       </span>
       <h1 className="flex flex-col">
-        <motion.span
-          onViewportEnter={() => count(number)}
-          viewport={{ once: true }}
-          className="text-2xl lg:text-xl text-primary"
-        >
-          {numberValue}
-        </motion.span>
+        <div className="flex items-center gap-x-1">
+          <motion.span
+            onViewportEnter={() => count(number)}
+            viewport={{ once: true }}
+            className="text-2xl lg:text-xl text-primary"
+          >
+            {numberValue}
+          </motion.span>
+          <span className="text-2xl lg:text-xl text-primary">{"+"}</span>
+        </div>
         <span className="text-sm tracking-wider text-foreground">{title}</span>
       </h1>
     </div>

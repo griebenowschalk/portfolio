@@ -5,7 +5,6 @@ interface NavbarProps {
 }
 
 const Navbar = ({ id }: NavbarProps) => {
-  console.log(id);
   return (
     <div
       className="w-[70] h-full fixed left-0 top-0 flex flex-col 

@@ -96,7 +96,6 @@ const Experience = () => {
             alt="Education"
             width={400}
             height={400}
-            className="opacity-70"
           />
         </div>
       </div>

@@ -23,9 +23,14 @@ const About = () => {
           <span className="hidden md:block absolute -left-5 top-10 scale-[2.5] text-muted-foreground">
             <i className="ri-arrow-left-s-fill"></i>
           </span>
-          <p className="text-lg font-medium text-muted-foreground lg:text-[16px] sm:text-[14px]">
-            {aboutText}
-          </p>
+          {aboutText.map((text) => (
+            <p
+              key={text}
+              className="text-lg font-medium text-muted-foreground lg:text-[16px] sm:text-[14px]"
+            >
+              {text}
+            </p>
+          ))}
           <Button asChild className="w-max flex items-center gap-2 mt-6">
             <a href="/CV.pdf" download={""}>
               <span>Download CV</span>

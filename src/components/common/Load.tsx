@@ -2,12 +2,17 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-const Load = () => {
-  const [loaded, setLoaded] = useState(false);
+interface LoadProps {
+  loaded: boolean;
+  setLoaded: (loaded: boolean) => void;
+}
 
+const Load = ({ loaded, setLoaded }: LoadProps) => {
   useEffect(() => {
-    setLoaded(true);
-  }, []);
+    setTimeout(() => {
+      setLoaded(true);
+    }, 1000);
+  }, [setLoaded]);
 
   return (
     <motion.div
@@ -17,7 +22,7 @@ const Load = () => {
       animate={{ top: loaded ? "-100%" : 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Image src="/spinner.gif" alt="load" width={50} height={50} />
+      <Image src="/spinner.gif" alt="load" width={150} height={150} />
     </motion.div>
   );
 };

@@ -11,43 +11,73 @@ export const questions = [
       "Yes! While my background is strongest in frontend development with React and Next.js, I am now also proficient in creating backend APIs, server-side logic, and database integration using Node.js.",
   },
   {
-    question: "What kind of backend projects have you worked on recently?",
+    question: "What types of projects do you enjoy building?",
     answer:
-      "I've been building REST APIs and serverless functions with Next.js API routes, and experimenting with Express and database integration using Node.js.",
+      "I love building fast, interactive, and visually polished web applications — projects where user experience, performance, and scalability all come together.",
   },
   {
-    question: "How do you connect your frontend with the backend?",
+    question: "Why did you choose React and Next.js?",
     answer:
-      "I use HTTP requests (through fetch or axios) from my React/Next.js frontend to interact with backend APIs, either built into Next.js or as separate Node.js services.",
+      "React’s component-based architecture makes UI development modular and efficient. Next.js adds production-ready features like routing, API routes, and server components, helping me deliver scalable full-stack apps.",
   },
   {
-    question: "Why did you choose to learn Node.js?",
+    question: "How do you ensure your code is maintainable?",
     answer:
-      "Learning Node.js allows me to use JavaScript for both frontend and backend, making me more versatile as a full-stack developer and enabling me to build complete web applications.",
+      "I use TypeScript for type safety, ESLint and Prettier for consistency, and Jest or React Testing Library for testing. I also keep a clear, feature-based folder structure to make scaling easier.",
   },
   {
-    question: "What advantages does Next.js offer you as a developer?",
+    question: "How do you handle state management?",
     answer:
-      "Next.js provides features like server-side rendering (SSR), static site generation (SSG), built-in routing, and API routes, which help me build fast, SEO-friendly, and scalable applications.",
+      "I use React Query (TanStack) for server state, and Zustand or Context for light global state. I prefer simple, predictable state solutions over heavy frameworks unless truly needed.",
   },
   {
-    question: "How do you ensure security when handling backend logic?",
+    question: "How do you handle backend logic in your apps?",
     answer:
-      "I follow best practices like storing sensitive data in environment variables, validating and sanitizing inputs, and managing authentication and authorization securely.",
+      "Depending on the project, I use Next.js API routes or a standalone Node.js + Express server. I rely on REST principles and Prisma ORM for type-safe, structured database access.",
   },
   {
-    question: "What database technologies are you familiar with?",
+    question: "How do you optimize performance and SEO?",
     answer:
-      "I'm familiar with MongoDB and PostgreSQL, and I connect to them using Node.js libraries such as Mongoose and Prisma within my backend or Next.js API routes.",
+      "I use Next.js static generation, image optimization, and lazy loading, alongside Lighthouse audits and Web Vitals. I also ensure strong metadata and semantic structure for SEO.",
+  },
+  {
+    question: "What design systems or UI libraries do you use?",
+    answer:
+      "I often use ShadCN/UI, Radix UI, or Chakra UI for accessibility and customization, combined with Tailwind CSS for layout and responsive design.",
+  },
+  {
+    question: "How do you stay up to date with modern web development?",
+    answer:
+      "I follow official React and Vercel updates, read RFCs, explore GitHub discussions, and build small playground projects to test new patterns like Server Components or Edge Functions.",
+  },
+  {
+    question: "How do you approach collaboration and teamwork?",
+    answer:
+      "I use GitHub Projects, issues, and PR reviews to stay organized and transparent. I write clean commits, document key decisions, and prioritize clear communication.",
   },
   {
     question: "Can you deploy full-stack applications?",
     answer:
-      "Yes! I can deploy both frontend and backend using platforms like Vercel or Netlify for serverless Next.js apps, or render.com and Heroku for custom Node.js servers.",
+      "Yes — I deploy using Vercel, Railway, or Docker. I handle both frontend and backend deployments, environment variables, and CI/CD setup for a complete delivery pipeline.",
   },
   {
-    question: "Where can I see examples of your work?",
+    question: "What’s a project you’re proud of?",
     answer:
-      "You can explore my projects and code samples in the Projects section of my portfolio website, or visit my GitHub profile for open-source contributions and experiments.",
+      "One of my favorites is a full-stack web app built with Next.js, Prisma, and Railway. I implemented authentication, pagination, and optimized API routes — it helped refine my full-stack workflow.",
+  },
+  {
+    question: "What are you learning next?",
+    answer:
+      "I'm diving deeper into backend architecture and system design — exploring topics like tRPC, microservices, and WebSockets to strengthen my full-stack expertise.",
+  },
+  {
+    question: "What’s your coding philosophy?",
+    answer:
+      "“Make it work. Make it clean. Make it fast.” I believe well-written code feels invisible — users just experience that it works beautifully.",
+  },
+  {
+    question: "Coffee or tea while coding?",
+    answer:
+      "Coffee in the morning, tea after 9pm — balance between focus and calm.",
   },
 ];

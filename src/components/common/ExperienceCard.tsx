@@ -3,6 +3,7 @@ import { ExperienceData } from "@/types/experience";
 const ExperienceCard = ({
   title,
   education,
+  company,
   experience,
   year,
 }: ExperienceData) => {
@@ -15,10 +16,18 @@ const ExperienceCard = ({
           </h1>
           <span className="md:hidden text-primary">{year}</span>
         </div>
-        <p className="text-muted-foreground">
-          <span className="block font-medium">Education:</span>
-          <span className="block pl-2 font-light">{education}</span>
-        </p>
+        {education && (
+          <p className="text-muted-foreground">
+            <span className="block font-medium">Education:</span>
+            <span className="block pl-2 font-light">{education}</span>
+          </p>
+        )}
+        {company && (
+          <p className="text-muted-foreground">
+            <span className="block font-medium">Company:</span>
+            <span className="block pl-2 font-light">{company}</span>
+          </p>
+        )}
         <div className="text-muted-foreground">
           <span className="font-medium">Experience:</span>
           <ul className="pl-2">

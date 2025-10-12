@@ -79,7 +79,7 @@ const Hero = () => {
               width={400}
               height={400}
               priority
-              className="h-auto w-[150px]"
+              className="h-auto w-[250px] bg-transparent"
             />
             <motion.span
               className="absolute text-4xl font-bold text-foreground"

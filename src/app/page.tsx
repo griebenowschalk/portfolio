@@ -13,6 +13,7 @@ import Load from "@/components/common/Load";
 
 export default function Home() {
   const [id, setId] = useState("home");
+  const [loaded, setLoaded] = useState(false);
 
   const compsRef = useCallback((node: HTMLDivElement | null) => {
     if (node) {
@@ -30,7 +31,6 @@ export default function Home() {
       );
 
       const compsArray = Array.from(node.children);
-      console.log(compsArray);
       compsArray.forEach((comp) => {
         observer.observe(comp);
       });
@@ -39,17 +39,19 @@ export default function Home() {
 
   return (
     <>
-      <Load />
+      <Load loaded={loaded} setLoaded={setLoaded} />
       <ThemeToggle>
         <Navbar id={id} />
-        <div ref={compsRef} className="px-4 sm:px-8 md:px-12 lg:px-16">
-          <Hero />
-          <About />
-          <Experience />
-          <Skills />
-          <Projects />
-          <Questions />
-        </div>
+        {loaded && (
+          <div ref={compsRef} className="px-4 sm:px-8 md:px-12 lg:px-16">
+            <Hero />
+            <About />
+            <Experience />
+            <Skills />
+            <Projects />
+            <Questions />
+          </div>
+        )}
       </ThemeToggle>
     </>
   );

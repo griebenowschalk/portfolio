@@ -1,7 +1,8 @@
 export interface ExperienceData {
   year: number;
   title: string;
-  education: string;
+  education?: string;
+  company?: string;
   experience: string[];
   index?: number;
 }
