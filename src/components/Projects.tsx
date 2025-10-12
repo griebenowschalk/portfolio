@@ -27,6 +27,7 @@ const Projects = () => {
   useEffect(() => {
     handleButtonClick();
     prevIndex.current = index;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
   const filteredProjects =

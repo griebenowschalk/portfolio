@@ -58,3 +58,7 @@
     color: hsl(var(--foreground));
   }
 }
+
+html {
+  scroll-behavior: smooth !important;
+}
