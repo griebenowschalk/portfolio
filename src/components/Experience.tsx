@@ -1,7 +1,5 @@
 "use client";
 
-// import { motion } from "framer-motion";
-
 import Heading from "./common/Heading";
 import Container from "./common/Container";
 import Image from "next/image";

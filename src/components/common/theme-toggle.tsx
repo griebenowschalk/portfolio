@@ -36,7 +36,7 @@ export function ThemeToggle({ children }: ThemeToggleProps) {
   return (
     <main>
       <div className="w-full max-w-[1200px] px-[90px] xl:px-0 pl-[80px] pr-5 sm:pr-0 mx-auto flex justify-center overflow-hidden">
-        <div className="fixed top-4 right-4 z-50 flex gap-2">
+        <div className="fixed top-2 right-0 z-50 flex gap-2">
           <Button
             variant="ghost"
             onClick={() => {

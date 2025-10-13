@@ -15,6 +15,10 @@ export default function Home() {
   const [id, setId] = useState("home");
   const [loaded, setLoaded] = useState(false);
 
+  const handleNavClick = (sectionId: string) => {
+    setId(sectionId);
+  };
+
   const compsRef = useCallback((node: HTMLDivElement | null) => {
     if (node) {
       const observer = new IntersectionObserver(
@@ -26,7 +30,7 @@ export default function Home() {
           });
         },
         {
-          threshold: 0.3,
+          threshold: 0.1,
         },
       );
 
@@ -41,7 +45,7 @@ export default function Home() {
     <>
       <Load loaded={loaded} setLoaded={setLoaded} />
       <ThemeToggle>
-        <Navbar id={id} />
+        <Navbar id={id} onNavClick={handleNavClick} />
         {loaded && (
           <div ref={compsRef} className="px-4 sm:px-8 md:px-12 lg:px-16">
             <Hero />
