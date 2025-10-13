@@ -76,7 +76,7 @@ export const experience: ExperienceData[] = [
     experience: [
       "Leading frontend development and architecture using React, TypeScript",
       "Implementing modern state management patterns with Zustand and React Query (TanStack).",
-      "Collaborating across teams to build performant, scalable PWAs.",
+      "Collaborating across teams to build a performant, scalable web application.",
       "Mentoring developers, improving standards, and managing task coordination through Jira and Git workflows.",
     ],
   },

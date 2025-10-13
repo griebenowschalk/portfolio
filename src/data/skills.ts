@@ -44,4 +44,12 @@ export const skills = [
     name: "Figma",
     image: "/skills/figma.png",
   },
+  { name: "Storybook", image: "/skills/storybook.png" },
+  { name: "Jira", image: "/skills/jira.png" },
+  { name: "Docker", image: "/skills/docker.png" },
+  { name: "Prisma", image: "/skills/prisma.png" },
+  { name: "VSCode", image: "/skills/vscode.png" },
+  { name: "Postman", image: "/skills/postman.png" },
+  { name: "Framer", image: "/skills/framer.png" },
+  { name: "MongoDB", image: "/skills/mongodb.png" },
 ];

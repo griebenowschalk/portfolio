@@ -25,7 +25,7 @@ const Skills = () => {
     <Container id="skills">
       <Heading title="Skills" />
 
-      <div className="w-full flex flex-wrap items-start gap-x-7 lg:gap-y-10 gap-y-6">
+      <div className="w-full flex flex-wrap items-start gap-x-2 sm:gap-x-7 gap-y-2 sm:gap-y-7">
         {skills.map((skill, index) => (
           <motion.div
             key={skill.name}
@@ -35,16 +35,16 @@ const Skills = () => {
             whileInView="visible"
             whileHover={{ scale: 1.1 }}
             viewport={{ margin: "100px", once: true }}
-            className="flex items-center justify-center gap-x-3 rounded-xl border bg-card border-accent lg:px-2 px-5 py-2 shadow-sm"
+            className="flex items-center justify-start gap-x-2 rounded-xl border bg-card border-accent lg:px-2 px-2 py-2 shadow-sm"
           >
             <Image
               src={skill.image}
               alt={skill.name}
               width={100}
               height={100}
-              className="h-auto w-[50px]"
+              className="h-[30px] sm:h-[50px] w-auto"
             />
-            <p className="text-sm font-medium text-card-foreground">
+            <p className="text-xs lg:text-sm font-medium text-card-foreground">
               {skill.name}
             </p>
           </motion.div>
