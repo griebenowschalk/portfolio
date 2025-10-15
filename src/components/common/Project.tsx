@@ -3,7 +3,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
-const Project = ({ name, image, description, index }: ProjectsData) => {
+const Project = ({ name, image, description, index, link }: ProjectsData) => {
   const [show, setShow] = useState(false);
   return (
     <motion.div
@@ -23,6 +23,7 @@ const Project = ({ name, image, description, index }: ProjectsData) => {
       onHoverStart={() => setShow(true)}
       onHoverEnd={() => setShow(false)}
       viewport={{ once: true }}
+      onClick={() => window.open(link, "_blank")}
       className="relative w-full md:w-[300px] h-max border border-accent rounded-lg cursor-pointer overflow-hidden"
     >
       <Image
