@@ -2,6 +2,8 @@
 
 A modern, responsive portfolio website built with Next.js and TypeScript. Features a clean, professional design with dark/light theme support and smooth animations.
 
+🌐 **Live Website**: [https://sgriebenowdev.online](https://sgriebenowdev.online)
+
 ## Features
 
 - **Responsive Design** - Optimized for all device sizes

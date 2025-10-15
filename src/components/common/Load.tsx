@@ -22,7 +22,14 @@ const Load = ({ loaded, setLoaded }: LoadProps) => {
       animate={{ top: loaded ? "-100%" : 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Image src="/spinner.gif" alt="load" width={150} height={150} />
+      <Image
+        src="/spinner.gif"
+        alt="load"
+        width={150}
+        height={150}
+        priority
+        className="w-auto h-[150px]"
+      />
     </motion.div>
   );
 };
