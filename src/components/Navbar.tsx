@@ -1,3 +1,5 @@
+"use client";
+
 import { navbar } from "@/data/navbar";
 
 interface NavbarProps {
@@ -14,7 +16,10 @@ const Navbar = ({ id, onNavClick }: NavbarProps) => {
       <a
         href={`/#home`}
         className="mb-6 sm:mb-10"
-        onClick={() => onNavClick("home")}
+        onClick={(e) => {
+          e.preventDefault();
+          onNavClick("home");
+        }}
       >
         <span className="text-2xl sm:text-3xl font-semibold text-primary">
           S
@@ -30,7 +35,10 @@ const Navbar = ({ id, onNavClick }: NavbarProps) => {
             <a
               href={`/#${item.href}`}
               className="group flex flex-col items-center gap-y-1 sm:gap-y-2"
-              onClick={() => onNavClick(item.href)}
+              onClick={(e) => {
+                e.preventDefault();
+                onNavClick(item.href);
+              }}
             >
               <span
                 className={`text-xl sm:text-2xl text-muted-foreground md:group-hover:text-primary md:group-hover:scale-125 transition-all ${id === item.href ? "text-primary scale-110" : "text-muted-foreground scale-100"} touch-manipulation`}

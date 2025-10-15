@@ -23,7 +23,7 @@ const Project = ({ name, image, description, index }: ProjectsData) => {
       onHoverStart={() => setShow(true)}
       onHoverEnd={() => setShow(false)}
       viewport={{ once: true }}
-      className="relative w-full md:w-[350px] h-max border border-accent rounded-lg cursor-pointer overflow-hidden"
+      className="relative w-full md:w-[300px] h-max border border-accent rounded-lg cursor-pointer overflow-hidden"
     >
       <Image
         src={image}
