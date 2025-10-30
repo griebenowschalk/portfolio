@@ -19,7 +19,7 @@ A modern, responsive portfolio website built with Next.js and TypeScript. Featur
 - **Project Showcase** - Filterable project gallery with tags
 - **Skills Section** - Visual representation of technical skills
 - **Experience Timeline** - Professional experience display
-- **Contact Form** - Interactive Q&A section
+- **Q&A Section** - Interactive question and answer component
 - **Loading Animation** - Custom loading screen
 
 ## Tech Stack
