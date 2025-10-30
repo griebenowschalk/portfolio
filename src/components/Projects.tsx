@@ -56,7 +56,10 @@ const Projects = () => {
           </motion.div>
         ))}
       </div>
-      <div className="w-full flex flex-wrap items-center justify-center gap-5">
+      <div
+        data-testid="projects-container"
+        className="w-full flex flex-wrap items-center justify-center gap-5"
+      >
         {filteredProjects.map((project) => (
           <motion.div key={project.name} layout>
             <Project {...project} index={index} />

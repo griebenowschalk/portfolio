@@ -6,7 +6,6 @@ export const projectsButtons: string[] = [
   "Next.js",
   "TailwindCSS",
   "TypeScript",
-  "JavaScript",
   "Node.js",
   "Unit Tests",
   "MongoDB",
@@ -22,7 +21,7 @@ export const projectsData: ProjectsData[] = [
       "https://api.microlink.io/?url=https%3A%2F%2Fsgriebenowdev.online%2F&screenshot=true&embed=screenshot.url",
     description: "Website for my portfolio",
     link: "https://github.com/griebenowschalk/portfolio",
-    tags: ["Next.js", "TailwindCSS", "TypeScript"],
+    tags: ["Next.js", "TailwindCSS", "TypeScript", "Unit Tests"],
   },
   {
     name: "User Importer",
@@ -30,7 +29,7 @@ export const projectsData: ProjectsData[] = [
       "https://api.microlink.io/?url=https%3A%2F%2Fuser-importer.netlify.app%2F&screenshot=true&embed=screenshot.url",
     description: "Cleans user data before importing into a database",
     link: "https://github.com/griebenowschalk/user-importer",
-    tags: ["ReactJS", "TailwindCSS", "Typescript", "Vite"],
+    tags: ["ReactJS", "TailwindCSS", "TypeScript", "Vite"],
   },
   {
     name: "My Todo App",

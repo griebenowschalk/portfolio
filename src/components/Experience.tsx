@@ -29,6 +29,7 @@ const Experience = () => {
         />
 
         <div
+          data-testid="experience-container"
           ref={containerRef}
           className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-x-8 items-start"
         >

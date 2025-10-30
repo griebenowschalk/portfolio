@@ -21,13 +21,14 @@ const Achievements = ({ icon, number, title }: Achievement) => {
   };
 
   return (
-    <div className="flex items-end gap-x-2">
+    <div data-testid="achievement" className="flex items-end gap-x-2">
       <span className="text-4xl lg:text-2xl text-muted-foreground">
         <i className={icon}></i>
       </span>
       <h1 className="flex flex-col">
         <div className="flex items-center gap-x-1">
           <motion.span
+            data-testid="achievement-number"
             onViewportEnter={() => count(number)}
             viewport={{ once: true }}
             className="text-2xl lg:text-xl text-primary"

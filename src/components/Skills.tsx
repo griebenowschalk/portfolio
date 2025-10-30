@@ -6,26 +6,31 @@ import Heading from "./common/Heading";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const Skills = () => {
-  const variants = {
-    visible: (index: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: 0.3 + index * 0.07,
-      },
-    }),
-    hidden: {
-      opacity: 0,
-      y: 30,
+export const skillsVariants = {
+  visible: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: 0.3 + index * 0.07,
     },
-  };
+  }),
+  hidden: {
+    opacity: 0,
+    y: 30,
+  },
+};
+
+const Skills = () => {
+  const variants = skillsVariants;
 
   return (
     <Container id="skills">
       <Heading title="Skills" />
 
-      <div className="w-full flex flex-wrap items-start gap-x-2 sm:gap-x-7 gap-y-2 sm:gap-y-7">
+      <div
+        data-testid="skills-container"
+        className="w-full flex flex-wrap items-start gap-x-2 sm:gap-x-7 gap-y-2 sm:gap-y-7"
+      >
         {skills.map((skill, index) => (
           <motion.div
             key={skill.name}

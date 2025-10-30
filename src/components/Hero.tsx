@@ -82,7 +82,9 @@ const Hero = () => {
               className="h-auto w-[250px] bg-transparent"
             />
             <motion.span
+              data-testid="hi-span"
               className="absolute text-4xl font-bold text-foreground"
+              aria-hidden={buttonHover}
               initial={{ scale: 0 }}
               animate={{
                 opacity: buttonHover ? 0 : 1,

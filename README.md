@@ -1,5 +1,10 @@
 # Portfolio Website
 
+[![CI](https://github.com/griebenowschalk/my-todo-app/actions/workflows/ci.yml/badge.svg)](https://github.com/griebenowschalk/my-todo-app/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+
 A modern, responsive portfolio website built with Next.js and TypeScript. Features a clean, professional design with dark/light theme support and smooth animations.
 
 🌐 **Live Website**: [https://sgriebenowdev.online](https://sgriebenowdev.online)
@@ -95,6 +100,17 @@ src/
 - `npm run lint` - Run ESLint
 - `npm run format` - Format code with Prettier
 - `npm run format:check` - Check code formatting
+- `npm run test` - Run unit tests once (Vitest)
+- `npm run test:watch` - Run tests in watch mode
+- `npm run coverage` - Run tests with code coverage (HTML at `coverage/index.html`)
+
+## Testing
+
+```bash
+npm run test         # run once
+npm run test:watch   # watch mode
+npm run coverage     # with coverage; open coverage/index.html for report
+```
 
 ## Customization
 

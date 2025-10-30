@@ -22,6 +22,7 @@ const Question = ({ question, answer, index = 0 }: QuestionsData) => {
     <motion.li
       custom={index}
       initial="hidden"
+      aria-hidden={show}
       whileInView="visible"
       variants={variants}
       viewport={{ margin: "50px", once: true }}

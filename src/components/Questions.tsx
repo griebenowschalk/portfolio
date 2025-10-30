@@ -9,7 +9,7 @@ const Questions = () => {
   return (
     <Container className="py-20" id="questions">
       <Heading title="Questions & Answers" />
-      <div>
+      <div data-testid="questions-container">
         <ul className="flex flex-col gap-y-3">
           {questions.map((question, index) => (
             <Question key={index} {...question} index={index} />

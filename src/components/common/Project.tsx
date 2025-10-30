@@ -20,8 +20,9 @@ const Project = ({ name, image, description, index, link }: ProjectsData) => {
         type: "spring",
         stiffness: 100,
       }}
-      onHoverStart={() => setShow(true)}
-      onHoverEnd={() => setShow(false)}
+      data-testid="project"
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
       viewport={{ once: true }}
       onClick={() => window.open(link, "_blank")}
       className="relative w-full md:w-[300px] h-max border border-accent rounded-lg cursor-pointer overflow-hidden"
@@ -34,6 +35,8 @@ const Project = ({ name, image, description, index, link }: ProjectsData) => {
         className="rounded-lg opacity-70"
       />
       <motion.div
+        data-testid="project-overlay"
+        aria-hidden={!show}
         initial={{ opacity: 0 }}
         animate={{ opacity: show ? 1 : 0 }}
         className="absolute top-0 w-full h-full flex flex-col items-center justify-center rounded-lg gap-y-2 bg-white/95 p-6"

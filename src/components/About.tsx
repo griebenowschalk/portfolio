@@ -41,7 +41,10 @@ const About = () => {
           </Button>
         </div>
       </div>
-      <div className="w-full flex flex-wrap items-center justify-between gap-x-7 gap-y-10">
+      <div
+        data-testid="achievements-container"
+        className="w-full flex flex-wrap items-center justify-between gap-x-7 gap-y-10"
+      >
         {achievements.map((achievement) => (
           <Achievements key={achievement.number} {...achievement} />
         ))}
