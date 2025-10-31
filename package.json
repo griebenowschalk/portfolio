@@ -2,6 +2,8 @@
   "name": "schalk-portfolio",
   "version": "1.0.0",
   "private": true,
+  "description": "Schalk Griebenow's portfolio website",
+  "author": "Schalk Griebenow",
   "license": "MIT",
   "scripts": {
     "dev": "next dev --turbopack",
