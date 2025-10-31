@@ -71,9 +71,9 @@ describe("About", () => {
 
     render(<About />);
     const nodes = screen.getAllByTestId("achievement-number");
-    nodes.forEach((node, i) => {
-      expect(node).toHaveTextContent(String(achievements[i].number));
-    });
+    for (const [index, node] of nodes.entries()) {
+      expect(node).toHaveTextContent(String(achievements[index].number));
+    }
 
     setTimeoutSpy.mockRestore();
     global.setTimeout = realSetTimeout;
