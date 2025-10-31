@@ -29,7 +29,7 @@ export const projectsData: ProjectsData[] = [
       "https://api.microlink.io/?url=https%3A%2F%2Fuser-importer.netlify.app%2F&screenshot=true&embed=screenshot.url",
     description: "Cleans user data before importing into a database",
     link: "https://github.com/griebenowschalk/user-importer",
-    tags: ["ReactJS", "TailwindCSS", "TypeScript", "Vite"],
+    tags: ["ReactJS", "TailwindCSS", "TypeScript", "Vite", "Unit Tests"],
   },
   {
     name: "My Todo App",
