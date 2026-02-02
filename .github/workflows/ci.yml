@@ -39,7 +39,7 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
-          file: ./coverage/lcov.info
+          files: ./apps/web/coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
