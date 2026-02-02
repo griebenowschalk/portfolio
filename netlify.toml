@@ -1,0 +1,10 @@
+# Monorepo: frontend in apps/web. Netlify runs install/build from repo root (workspaces).
+
+[build]
+  base = "."
+  command = "npm run build"
+  publish = "apps/web/.next"
+
+# Skip lifecycle scripts (e.g. prepare/husky) during install — not needed in CI
+[build.environment]
+  NPM_FLAGS = "--ignore-scripts"
