@@ -22,6 +22,7 @@ export const projectsData: ProjectsData[] = [
     description: "Website for my portfolio",
     link: "https://github.com/griebenowschalk/portfolio",
     tags: ["Next.js", "TailwindCSS", "TypeScript", "Unit Tests"],
+    inProgress: true,
   },
   {
     name: "User Importer",

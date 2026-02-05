@@ -113,6 +113,26 @@ npm run test:watch   # watch mode
 npm run coverage     # with coverage; open coverage/index.html for report
 ```
 
+### Testing locally (full stack)
+
+After you’ve implemented the backend in `apps/api`:
+
+1. **Start the API (choose one)**  
+   - **Docker (API + MongoDB):** From `apps/api`: `docker compose up --build`. API at http://localhost:5000, MongoDB in Docker.  
+   - **npm:** Set `MONGODB_URI` in `apps/api/.env` (Atlas or local MongoDB), then from repo root: `npm run dev:api`.
+
+2. **Check API:** Open http://localhost:5000/health → `{"status":"healthy",...}`.
+
+3. **Start the frontend:** From repo root: `npm run dev`. Web at http://localhost:3000.
+
+4. **Point frontend at local API:** In `apps/web/.env.local` set `NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1`. Restart the dev server.
+
+5. **Optional – seed DB:** After implementing the seed script: `npm run seed:api` (with API stopped if using Docker, or run seed against the same MongoDB).
+
+6. **Manual API tests:** Use Postman/curl for GET endpoints and auth (`POST /api/v1/auth/login` then `Authorization: Bearer <token>` for writes).
+
+See [docs/IMPLEMENTATION_GUIDE.md](docs/IMPLEMENTATION_GUIDE.md#testing) and [apps/api/README.md](apps/api/README.md) for backend-only options and troubleshooting.
+
 ## Customization
 
 The portfolio is easily customizable through the data files:
