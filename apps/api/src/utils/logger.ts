@@ -49,4 +49,8 @@ const logger = winston.createLogger({
   transports,
 });
 
-export default logger;
+// Morgan-compatible stream
+const logStream = {
+  write: (message: string) => logger.info(message.trim()),
+};
+export default Object.assign(logger, { stream: logStream });

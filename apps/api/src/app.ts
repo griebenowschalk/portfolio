@@ -1,48 +1,75 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import compression from 'compression';
-import morgan from 'morgan';
+import express, { Application } from "express";
+import helmet from "helmet";
+import cors from "cors";
+import morgan from "morgan";
+import compression from "compression";
+import routes from "./routes";
+import { errorHandler } from "./middleware/errorHandler";
+import { rateLimiter } from "./middleware/rateLimit";
+import logger from "./utils/logger";
+import { env } from "./config/env";
 
-const app = express();
+class App {
+  public app: Application;
 
-// Allowed origins: your domain + localhost (see docs for strict CORS)
-const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:3000',
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-].filter(Boolean);
+  constructor() {
+    this.app = express();
+    this.initializeMiddleware();
+    this.initializeRoutes();
+    this.initializeErrorHandling();
+  }
 
-app.set('trust proxy', 1);
+  private initializeMiddleware(): void {
+    // Security middleware
+    this.app.use(helmet());
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      callback(new Error('Not allowed by CORS'));
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
+    // CORS
+    this.app.use(
+      cors({
+        origin: env.FRONTEND_URL,
+        credentials: true,
+      }),
+    );
 
-app.use(helmet({ contentSecurityPolicy: false }));
-app.use(compression());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+    // Rate limiting
+    this.app.use("/api/", rateLimiter);
 
-app.get('/health', (_req, res) => {
-  res.json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    service: 'portfolio-cms-api',
-  });
-});
+    // Body parsing
+    this.app.use(express.json({ limit: "10mb" }));
+    this.app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Mount API routes here (e.g. app.use('/api/v1', routes))
-// See docs/CODE_CONTEXT.md and docs/IMPLEMENTATION_GUIDE.md
+    // Compression
+    this.app.use(compression());
 
-export default app;
+    // Logging
+    this.app.use(morgan("combined", { stream: logger.stream as any }));
+
+    // Health check endpoint
+    this.app.get("/health", (_req, res) => {
+      res.json({
+        status: "healthy",
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+      });
+    });
+  }
+
+  private initializeRoutes(): void {
+    // API routes
+    this.app.use("/api/v1", routes);
+
+    // 404 handler
+    this.app.use("*", (_req, res) => {
+      res.status(404).json({
+        success: false,
+        error: "Route not found",
+      });
+    });
+  }
+
+  private initializeErrorHandling(): void {
+    this.app.use(errorHandler);
+  }
+}
+
+export default App;
