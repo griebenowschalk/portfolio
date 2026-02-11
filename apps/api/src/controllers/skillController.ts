@@ -40,6 +40,8 @@ class SkillController {
           success: false,
           error: 'Skill not found',
         });
+
+        return;
       }
 
       res.json({
@@ -109,6 +111,8 @@ class SkillController {
           success: false,
           error: 'Skill not found',
         });
+
+        return;
       }
 
       res.json({
@@ -134,6 +138,8 @@ class SkillController {
           success: false,
           error: 'Skill not found',
         });
+
+        return;
       } else {
         if (skill.icon && skill.icon.key) {
           await s3Service.deleteFile(skill.icon.key);

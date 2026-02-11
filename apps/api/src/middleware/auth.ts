@@ -35,13 +35,10 @@ export const authenticate = (
     }
 
     // 2. EXTRACT: Token (remove "Bearer " prefix)
-    // TODO: Get token from "Bearer <token>"
-    // Hint: const token = authHeader.split(' ')[1];
 
     const token = authHeader.split(' ')[1];
 
     // 3. VERIFY: Token
-    // TODO: Use verifyAccessToken(token)
 
     const decoded = verifyAccessToken(token);
 
@@ -86,7 +83,6 @@ export const requireAdmin = (
     });
   }
 
-  // TODO: Check if user role is 'admin'
   if (req.user.role !== 'admin') {
     return res.status(403).json({
       success: false,
