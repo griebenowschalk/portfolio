@@ -1,14 +1,15 @@
 import { Router } from 'express';
 import authController from '../controllers/authController';
 import { validateRegister, validateLogin } from '../middleware/validation';
-import { authenticate } from '../middleware/auth';
+import { authenticate, requireAdmin } from '../middleware/auth';
 
 const router = Router();
 
-// PUBLIC ROUTES
-
-router.post('/register', validateRegister, authController.register);
+// PUBLIC
 router.post('/login', validateLogin, authController.login);
+
+// ADMIN ONLY
+router.post('/register', authenticate, requireAdmin, validateRegister, authController.register);
 
 // PROTECTED ROUTES
 

@@ -3,7 +3,9 @@ import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
 import compression from "compression";
+import swaggerUi from "swagger-ui-express";
 import routes from "./routes";
+import { openApiDocument } from "./openapi";
 import { errorHandler } from "./middleware/errorHandler";
 import { rateLimiter } from "./middleware/rateLimit";
 import logger from "./utils/logger";
@@ -55,6 +57,13 @@ class App {
   }
 
   private initializeRoutes(): void {
+    // OpenAPI docs (generated from validation schemas + routes)
+    this.app.get("/api-docs/openapi.json", (_req, res) => {
+      res.setHeader("Content-Type", "application/json");
+      res.send(openApiDocument);
+    });
+    this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
+
     // API routes
     this.app.use("/api/v1", routes);
 

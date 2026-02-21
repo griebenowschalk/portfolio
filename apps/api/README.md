@@ -49,6 +49,8 @@ npm run dev:api
 
 - API: http://localhost:5002 (or whatever `PORT` is in `.env`, default 5000)
 - Health: http://localhost:5002/health
+- **API docs (Swagger UI):** http://localhost:5002/api-docs  
+- **OpenAPI spec (JSON):** http://localhost:5002/api-docs/openapi.json — use this URL in Postman: **Import → Link** to get an auto-updated collection.
 
 ## Scripts (from root)
 

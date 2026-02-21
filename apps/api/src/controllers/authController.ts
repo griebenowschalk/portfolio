@@ -4,8 +4,8 @@ import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
 
 class AuthController {
   /**
-   * POST /api/v1/auth/register
-   * Register a new user
+   * POST /api/v1/auth/register (admin only)
+   * Create a new CMS user. Only admins can register; new user logs in via /login.
    */
   async register(req: Request, res: Response, next: NextFunction) {
     try {
@@ -22,16 +22,6 @@ class AuthController {
       }
 
       const user = await User.create({ name, email, password });
-      const token = generateAccessToken({
-        userId: user._id.toString(),
-        email: user.email,
-        role: user.role,
-      });
-      const refreshToken = generateRefreshToken({
-        userId: user._id.toString(),
-        email: user.email,
-        role: user.role,
-      });
 
       res.status(201).json({
         success: true,
@@ -42,8 +32,6 @@ class AuthController {
             email: user.email,
             role: user.role,
           },
-          token,
-          refreshToken,
         },
       });
     } catch (error) {
