@@ -41,7 +41,7 @@
     "npm": ">=10"
   },
   "lint-staged": {
-    "apps/**/**/*.{js,jsx,ts,tsx,css,md,mdx,json,yml,yaml}": [
+    "apps/**/*.{js,jsx,ts,tsx,css,md,mdx,json,yml,yaml}": [
       "prettier --write",
       "eslint --fix"
     ]
