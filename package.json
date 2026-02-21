@@ -10,7 +10,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm run dev",
+    "dev": "npm run dev --workspace=web",
     "dev:web": "npm run dev --workspace=web",
     "dev:api": "npm run dev --workspace=api",
     "dev:cms": "npm run dev --workspace=cms",
@@ -41,8 +41,9 @@
     "npm": ">=10"
   },
   "lint-staged": {
-    "apps/web/**/*.{js,jsx,ts,tsx,css,md,mdx,json,yml,yaml}": [
-      "prettier --write"
+    "apps/**/**/*.{js,jsx,ts,tsx,css,md,mdx,json,yml,yaml}": [
+      "prettier --write",
+      "eslint --fix"
     ]
   }
 }
