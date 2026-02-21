@@ -36,6 +36,7 @@ const envSchema = z.object({
 
   // URLs
   FRONTEND_URL: z.string().url(),
+  CMS_URL: z.string().url(),
 
   LOG_LEVEL: z.string().default("info"),
 

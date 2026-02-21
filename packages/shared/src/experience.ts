@@ -13,4 +13,8 @@ export interface ApiExperience {
   achievements: string[];
   technologies?: string[];
   order: number;
+  logo?: {
+    url: string;
+    key: string;
+  };
 }

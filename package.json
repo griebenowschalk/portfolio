@@ -10,12 +10,14 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=web",
+    "dev": "npm run dev",
     "dev:web": "npm run dev --workspace=web",
     "dev:api": "npm run dev --workspace=api",
+    "dev:cms": "npm run dev --workspace=cms",
     "build": "npm run build --workspace=web",
     "build:web": "npm run build --workspace=web",
     "build:api": "npm run build --workspace=api",
+    "build:cms": "npm run build --workspace=cms",
     "start": "npm run start --workspace=web",
     "start:web": "npm run start --workspace=web",
     "start:api": "npm run start --workspace=api",

@@ -1,73 +1,92 @@
-# React + TypeScript + Vite
+# Portfolio CMS
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Admin UI for managing portfolio content: projects, skills, and experience. Uses the portfolio API for data and JWT auth.
 
-Currently, two official plugins are available:
+## Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Run with other apps (local testing)
 
-## React Compiler
+From the **repo root**:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. **Start the API** (required for CMS auth and data):
 
-## Expanding the ESLint configuration
+   ```bash
+   npm run dev:api
+   ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+   API runs at `http://localhost:5002`. Optionally use Docker: from `apps/api`, `docker compose up -d`.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. **Start the CMS**:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+   ```bash
+   npm run dev:cms
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+   CMS runs at `http://localhost:5173` (Vite default).
+
+3. **(Optional) Start the web frontend** to verify content updates:
+
+   ```bash
+   npm run dev:web
+   ```
+
+   Web runs at `http://localhost:3000`.
+
+### Environment
+
+Create `apps/cms/.env.development`:
+
+```env
+VITE_API_URL=http://localhost:5002
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+If unset, the app falls back to `http://localhost:5002`. Use this to point at a different API (e.g. staging).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Login
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Use the admin user created by the API seed (e.g. from `apps/api` run `npm run seed:reset`). Credentials come from `ADMIN_EMAIL` / `ADMIN_PASSWORD` in the API env (e.g. `apps/api/.env.development`).
+
+---
+
+## Production
+
+### Build
+
+From repo root:
+
+```bash
+npm run build:cms
 ```
+
+Or from `apps/cms`:
+
+```bash
+npm run build
+```
+
+Output is in `apps/cms/dist`. Serve with any static host (Vercel, Netlify, S3 + CloudFront, etc.).
+
+### Environment
+
+Set at **build time** (Vite inlines `import.meta.env`):
+
+| Variable         | Description                    | Example                    |
+|------------------|--------------------------------|----------------------------|
+| `VITE_API_URL`   | Base URL of the portfolio API | `https://api.example.com`  |
+
+No trailing slash. Example for a deploy:
+
+```bash
+VITE_API_URL=https://api.yoursite.com npm run build
+```
+
+Or in your CI/CD: define `VITE_API_URL` in the environment before running `npm run build`.
+
+### CORS
+
+The API must allow the CMS origin in CORS (e.g. `https://cms.yoursite.com` or the domain you host the built CMS on). Configure this in the API, not in the CMS app.
+
+### After deploy
+
+- Users log in with the same admin credentials as in development (or whatever accounts exist in the API DB).
+- The API handles auth (JWT, refresh) and storage; the CMS only needs to reach `VITE_API_URL`.
