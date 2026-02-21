@@ -1,7 +1,14 @@
 import dotenv from "dotenv";
+import { existsSync } from "fs";
+import { resolve } from "path";
 import { z } from "zod";
 
-// Load environment variables
+// Load env: .env.development first when present (local/Docker dev), then .env (production reference).
+// Railway/production: no .env.development in container; set NODE_ENV and all vars in dashboard.
+const devPath = resolve(process.cwd(), ".env.development");
+if (existsSync(devPath)) {
+  dotenv.config({ path: devPath });
+}
 dotenv.config();
 
 // Define schema for environment variables

@@ -1,7 +1,15 @@
 import { render, screen, within } from "@testing-library/react";
 import Skills, { skillsVariants } from "@/components/Skills";
 import { skills } from "@/data/skills";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@/hooks/useSkills", () => ({
+  useSkills: () => ({
+    skills,
+    isLoading: false,
+    isError: false,
+  }),
+}));
 
 describe("Skills", () => {
   it("data integrity test", () => {

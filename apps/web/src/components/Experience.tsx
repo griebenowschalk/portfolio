@@ -4,11 +4,12 @@ import Heading from "./common/Heading";
 import Container from "./common/Container";
 import Image from "next/image";
 import ExperienceCard from "./common/ExperienceCard";
-import { experience } from "@/data/experience";
+import { useExperience } from "@/hooks/useExperience";
 import { Fragment, useRef } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 
 const Experience = () => {
+  const { experience, isLoading, isError } = useExperience();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -17,6 +18,25 @@ const Experience = () => {
   });
 
   const scrollY = useSpring(scrollYProgress, { stiffness: 200, damping: 20 });
+
+  if (isError) {
+    return (
+      <Container className="relative" id="experience">
+        <Heading title="Experience & Education" />
+        <p className="text-muted-foreground py-6">Unable to load experience.</p>
+      </Container>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Container className="relative" id="experience">
+        <Heading title="Experience & Education" />
+        <div className="py-6 text-muted-foreground">Loading…</div>
+      </Container>
+    );
+  }
+
   return (
     <Container className="relative" id="experience">
       <Heading title="Experience & Education" />
@@ -34,7 +54,7 @@ const Experience = () => {
           className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-x-8 items-start"
         >
           {experience.map((item, idx) => (
-            <Fragment key={`${item.year}-${idx}`}>
+            <Fragment key={`${item.title}-${item.year}-${idx}`}>
               {/* Left Column */}
               <motion.div
                 initial={{ opacity: 0, x: idx % 2 === 0 ? -80 : 80 }}

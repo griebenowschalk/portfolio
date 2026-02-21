@@ -1,161 +1,46 @@
-# Portfolio Website
+# Portfolio monorepo
 
-[![CI](https://github.com/griebenowschalk/my-todo-app/actions/workflows/ci.yml/badge.svg)](https://github.com/griebenowschalk/my-todo-app/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/griebenowschalk/portfolio/badge.svg)](https://codecov.io/gh/griebenowschalk/portfolio)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+Monorepo: Next.js frontend, CMS API, and shared types. Frontend reads projects, skills, and experience from the API; shared package keeps the API contract in one place.
 
-A modern, responsive portfolio website built with Next.js and TypeScript. Features a clean, professional design with dark/light theme support and smooth animations.
+## Structure
 
-🌐 **Live Website**: [https://sgriebenowdev.online](https://sgriebenowdev.online)
+- **apps/web** – Next.js frontend (App Router). Data via SWR + Axios from the API. See [apps/web/README.md](apps/web/README.md).
+- **apps/api** – Express API (MongoDB, JWT, S3). Serves projects, skills, experience; admin-only writes. See [apps/api/README.md](apps/api/README.md).
+- **packages/shared** – Shared TypeScript types for the API contract (`ApiProject`, `ApiSkill`, `ApiExperience`, response envelopes). Used by both API and web.
 
-## Features
+## Getting started
 
-- **Responsive Design** - Optimized for all device sizes
-- **Dark/Light Theme** - Toggle between themes with persistent preference
-- **Smooth Animations** - Framer Motion powered transitions
-- **Interactive Navigation** - Auto-highlighting based on scroll position
-- **Project Showcase** - Filterable project gallery with tags
-- **Skills Section** - Visual representation of technical skills
-- **Experience Timeline** - Professional experience display
-- **Q&A Section** - Interactive question and answer component
-- **Loading Animation** - Custom loading screen
+From repo root:
 
-## Tech Stack
-
-### Frontend
-
-- **Next.js 15.5.4** - React framework with App Router
-- **React 19.1.0** - UI library
-- **TypeScript 5** - Type safety
-- **Tailwind CSS 3.4.15** - Utility-first CSS framework
-- **Framer Motion 12.23.22** - Animation library
-
-### UI Components
-
-- **Radix UI** - Accessible component primitives
-- **Remix Icons** - Icon library
-- **Class Variance Authority** - Component variant management
-- **Tailwind Merge** - Conditional class merging
-
-### Development Tools
-
-- **ESLint** - Code linting
-- **Prettier** - Code formatting
-- **Husky** - Git hooks
-- **Lint-staged** - Pre-commit linting
-- **Next Themes** - Theme management
-
-### Build & Deployment
-
-- **Turbopack** - Fast bundler (dev mode)
-- **Node.js 22** - Runtime environment
-- **npm 10+** - Package manager
-
-## Project Structure
-
-```
-src/
-├── app/                 # Next.js App Router
-│   ├── globals.css     # Global styles
-│   ├── layout.tsx      # Root layout
-│   └── page.tsx        # Home page
-├── components/         # React components
-│   ├── common/         # Shared components
-│   └── ui/            # UI components
-├── data/              # Static data
-├── lib/               # Utilities
-└── types/             # TypeScript types
+```bash
+npm install
 ```
 
-## Getting Started
+**Run locally (full stack):**
 
-1. **Clone the repository**
+1. **API:** `cd apps/api`, copy `.env.development.example` to `.env.development`, set `MONGODB_URI` and other vars (see `apps/api/docs/example_env.md`). Then from root: `npm run dev:api`. API at http://localhost:5002 (or `PORT` in env).
+2. **Web:** In `apps/web`, copy `.env.development.example` to `.env.development`, set `NEXT_PUBLIC_API_URL=http://localhost:5002`. From root: `npm run dev`. Frontend at http://localhost:3000.
+3. **Seed (once):** With API and MongoDB up, from root: `npm run seed:api`.
 
-   ```bash
-   git clone <repository-url>
-   cd portfolio
-   ```
+**Build shared types (if needed):** From root, `npm run build -w @portfolio/shared`. Web and API depend on the built `dist/` in `packages/shared`.
 
-2. **Install dependencies**
+## Scripts (from root)
 
-   ```bash
-   npm install
-   ```
-
-3. **Run development server**
-
-   ```bash
-   npm run dev
-   ```
-
-4. **Open in browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-## Available Scripts
-
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run format` - Format code with Prettier
-- `npm run format:check` - Check code formatting
-- `npm run test` - Run unit tests once (Vitest)
-- `npm run test:watch` - Run tests in watch mode
-- `npm run coverage` - Run tests with code coverage (HTML at `coverage/index.html`)
+- `npm run dev` / `npm run dev:web` – start frontend
+- `npm run dev:api` – start API
+- `npm run build` / `npm run build:web` – build frontend
+- `npm run build:api` – build API
+- `npm run seed:api` – seed DB (admin + sample data)
+- `npm run test` / `npm run test:web` – frontend tests
+- `npm run coverage` – frontend coverage
 
 ## Testing
 
-```bash
-npm run test         # run once
-npm run test:watch   # watch mode
-npm run coverage     # with coverage; open coverage/index.html for report
-```
+- **Frontend:** Unit tests in `apps/web` (Vitest + React Testing Library). API hooks are mocked; no backend required. See [apps/web/docs/testing.md](apps/web/docs/testing.md).
+- **Full stack:** Start API and web as above. Use Postman or curl for API (e.g. `/health`, `GET /api/v1/projects`). Frontend will load data from the API when `NEXT_PUBLIC_API_URL` points at it.
 
-### Testing locally (full stack)
+## Docs
 
-After you’ve implemented the backend in `apps/api`:
-
-1. **Start the API (choose one)**  
-   - **Docker (API + MongoDB):** From `apps/api`: `docker compose up --build`. API at http://localhost:5000, MongoDB in Docker.  
-   - **npm:** Set `MONGODB_URI` in `apps/api/.env` (Atlas or local MongoDB), then from repo root: `npm run dev:api`.
-
-2. **Check API:** Open http://localhost:5000/health → `{"status":"healthy",...}`.
-
-3. **Start the frontend:** From repo root: `npm run dev`. Web at http://localhost:3000.
-
-4. **Point frontend at local API:** In `apps/web/.env.local` set `NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1`. Restart the dev server.
-
-5. **Optional – seed DB:** After implementing the seed script: `npm run seed:api` (with API stopped if using Docker, or run seed against the same MongoDB).
-
-6. **Manual API tests:** Use Postman/curl for GET endpoints and auth (`POST /api/v1/auth/login` then `Authorization: Bearer <token>` for writes).
-
-See [docs/IMPLEMENTATION_GUIDE.md](docs/IMPLEMENTATION_GUIDE.md#testing) and [apps/api/README.md](apps/api/README.md) for backend-only options and troubleshooting.
-
-## Customization
-
-The portfolio is easily customizable through the data files:
-
-- **About Me**: `src/data/about-me.ts`
-- **Skills**: `src/data/skills.ts`
-- **Projects**: `src/data/projects.ts`
-- **Experience**: `src/data/experience.ts`
-- **Questions**: `src/data/questions.ts`
-
-## Responsive Breakpoints
-
-- Mobile: `< 640px`
-- Tablet: `640px - 768px`
-- Desktop: `768px - 1024px`
-- Large: `> 1024px`
-
-## Key Components
-
-- **Hero** - Landing section with introduction
-- **About** - Personal information and achievements
-- **Experience** - Professional timeline
-- **Skills** - Technical skills showcase
-- **Projects** - Portfolio gallery with filtering
-- **Questions** - Interactive Q&A section
-- **Navbar** - Navigation with scroll-based highlighting
+- [apps/web/README.md](apps/web/README.md) – frontend quick start, env, scripts, links to web docs
+- [apps/api/README.md](apps/api/README.md) – API quick start, env, Docker, deploy, links to api docs
+- [packages/shared/README.md](packages/shared/README.md) – shared types and usage

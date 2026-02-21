@@ -4,11 +4,13 @@ import Container from "./common/Container";
 import Heading from "./common/Heading";
 import { Button } from "./ui/button";
 import Project from "./common/Project";
-import { projectsButtons, projectsData } from "@/data/projects";
+import { projectsButtons } from "@/data/projects";
+import { useProjects } from "@/hooks/useProjects";
 import { useState, useRef, useEffect } from "react";
 import { animate, motion } from "framer-motion";
 
 const Projects = () => {
+  const { projects: projectsData, isLoading, isError } = useProjects();
   const [index, setIndex] = useState(0);
   const prevIndex = useRef(0);
   const buttonsRef = useRef<HTMLButtonElement[]>([]);
@@ -35,6 +37,24 @@ const Projects = () => {
       ? projectsData
       : projectsData.filter((p) => p.tags.includes(projectsButtons[index]));
 
+  if (isError) {
+    return (
+      <Container id="projects" className="items-start justify-start gap-y-0">
+        <Heading title="Projects" />
+        <p className="text-muted-foreground py-6">Unable to load projects.</p>
+      </Container>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Container id="projects" className="items-start justify-start gap-y-0">
+        <Heading title="Projects" />
+        <div className="py-10 text-muted-foreground">Loading projects…</div>
+      </Container>
+    );
+  }
+
   return (
     <Container id="projects" className="items-start justify-start gap-y-0">
       <Heading title="Projects" />
@@ -60,7 +80,7 @@ const Projects = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {filteredProjects.map((project, i) => (
             <motion.div
-              key={project.name}
+              key={`${project.name}-${i}`}
               layout
               className="flex justify-center"
             >

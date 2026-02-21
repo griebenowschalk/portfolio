@@ -6,7 +6,8 @@
   "author": "Schalk Griebenow",
   "license": "MIT",
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "dev": "npm run dev --workspace=web",

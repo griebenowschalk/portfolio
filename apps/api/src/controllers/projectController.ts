@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import type { ApiListResponse, ApiProject } from "@portfolio/shared";
 import Project from "../models/Project";
 import s3Service from "../services/s3Service";
 
@@ -37,17 +38,18 @@ class ProjectController {
         Project.countDocuments(query),
       ]);
 
-      // 4. SEND RESPONSE
-      res.json({
+      // 4. SEND RESPONSE (shape defined in @portfolio/shared)
+      const body: ApiListResponse<ApiProject> = {
         success: true,
-        data: projects,
+        data: projects as unknown as ApiProject[],
         pagination: {
           page: Number(page),
           limit: Number(limit),
           total,
           pages: Math.ceil(total / Number(limit)),
         },
-      });
+      };
+      res.json(body);
     } catch (error) {
       // Pass errors to error handling middleware
       next(error);

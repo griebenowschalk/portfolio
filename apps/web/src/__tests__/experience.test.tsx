@@ -1,7 +1,15 @@
 import Experience from "@/components/Experience";
 import { experience } from "@/data/experience";
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@/hooks/useExperience", () => ({
+  useExperience: () => ({
+    experience,
+    isLoading: false,
+    isError: false,
+  }),
+}));
 
 describe("Experience", () => {
   it("data integrity test", () => {

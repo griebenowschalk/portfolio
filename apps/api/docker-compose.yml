@@ -6,7 +6,7 @@ services:
     ports:
       - "5002:5002"
     env_file:
-      - .env
+      - .env.development
     environment:
       NODE_ENV: development
       PORT: 5002

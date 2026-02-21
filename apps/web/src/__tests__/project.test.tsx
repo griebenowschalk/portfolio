@@ -3,6 +3,14 @@ import Projects from "@/components/Projects";
 import { projectsButtons, projectsData } from "@/data/projects";
 import { describe, expect, it, vi } from "vitest";
 
+vi.mock("@/hooks/useProjects", () => ({
+  useProjects: () => ({
+    projects: projectsData,
+    isLoading: false,
+    isError: false,
+  }),
+}));
+
 describe("Project", () => {
   it("data integrity test", () => {
     expect(projectsData.length).toBeGreaterThan(0);

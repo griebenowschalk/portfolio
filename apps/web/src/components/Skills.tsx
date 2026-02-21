@@ -1,6 +1,6 @@
 "use client";
 
-import { skills } from "@/data/skills";
+import { useSkills } from "@/hooks/useSkills";
 import Container from "./common/Container";
 import Heading from "./common/Heading";
 import Image from "next/image";
@@ -21,7 +21,26 @@ export const skillsVariants = {
 };
 
 const Skills = () => {
+  const { skills, isLoading, isError } = useSkills();
   const variants = skillsVariants;
+
+  if (isError) {
+    return (
+      <Container id="skills">
+        <Heading title="Skills" />
+        <p className="text-muted-foreground py-6">Unable to load skills.</p>
+      </Container>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Container id="skills">
+        <Heading title="Skills" />
+        <div className="py-6 text-muted-foreground">Loading skills…</div>
+      </Container>
+    );
+  }
 
   return (
     <Container id="skills">
