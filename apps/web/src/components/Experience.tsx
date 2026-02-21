@@ -12,6 +12,7 @@ const Experience = () => {
   const { experience, isLoading, isError } = useExperience();
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Ref must be attached to DOM before useScroll target is used (avoid hydration error)
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 95%", "end end"],
@@ -19,29 +20,11 @@ const Experience = () => {
 
   const scrollY = useSpring(scrollYProgress, { stiffness: 200, damping: 20 });
 
-  if (isError) {
-    return (
-      <Container className="relative" id="experience">
-        <Heading title="Experience & Education" />
-        <p className="text-muted-foreground py-6">Unable to load experience.</p>
-      </Container>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <Container className="relative" id="experience">
-        <Heading title="Experience & Education" />
-        <div className="py-6 text-muted-foreground">Loading…</div>
-      </Container>
-    );
-  }
-
   return (
     <Container className="relative" id="experience">
       <Heading title="Experience & Education" />
       <div className="relative w-full py-5 md:py-10">
-        {/* Center line */}
+        {/* Center line - only when we have a target (ref attached) */}
         <motion.div
           initial={{ scaleY: 0 }}
           style={{ scaleY: scrollY }}
@@ -53,60 +36,70 @@ const Experience = () => {
           ref={containerRef}
           className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-x-8 items-start"
         >
-          {experience.map((item, idx) => (
-            <Fragment key={`${item.title}-${item.year}-${idx}`}>
-              {/* Left Column */}
-              <motion.div
-                initial={{ opacity: 0, x: idx % 2 === 0 ? -80 : 80 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, type: "spring", stiffness: 50 }}
-                className="w-full max-w-xl justify-self-center md:justify-self-end"
-              >
-                {idx % 2 === 0 ? (
-                  <ExperienceCard {...item} />
-                ) : (
-                  <div className="hidden md:block" />
-                )}
-              </motion.div>
-              {/* Center Column */}
-              <div className="hidden md:flex relative items-center justify-center">
-                <div className="relative z-20 w-14 aspect-square rounded-full border border-primary bg-card grid place-items-center text-primary font-light shadow-sm">
-                  {item.year}
-                </div>
-                <div
-                  className={`absolute z-10 w-6 h-6 rounded-full grid place-items-center text-primary ${
-                    idx % 2 === 0 ? "-left-7" : "-right-7"
-                  }`}
-                  aria-hidden="true"
+          {isError && (
+            <p className="col-span-full text-muted-foreground py-6">
+              Unable to load experience.
+            </p>
+          )}
+          {isLoading && (
+            <p className="col-span-full text-muted-foreground py-6">Loading…</p>
+          )}
+          {!isLoading &&
+            !isError &&
+            experience.map((item, idx) => (
+              <Fragment key={`${item.title}-${item.year}-${idx}`}>
+                {/* Left Column */}
+                <motion.div
+                  initial={{ opacity: 0, x: idx % 2 === 0 ? -80 : 80 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, type: "spring", stiffness: 50 }}
+                  className="w-full max-w-xl justify-self-center md:justify-self-end"
                 >
-                  <span className="block scale-[1.5]">
-                    <i
-                      className={
-                        idx % 2 === 0
-                          ? "ri-arrow-right-s-fill"
-                          : "ri-arrow-left-s-fill"
-                      }
-                    ></i>
-                  </span>
+                  {idx % 2 === 0 ? (
+                    <ExperienceCard {...item} />
+                  ) : (
+                    <div className="hidden md:block" />
+                  )}
+                </motion.div>
+                {/* Center Column */}
+                <div className="hidden md:flex relative items-center justify-center">
+                  <div className="relative z-20 w-14 aspect-square rounded-full border border-primary bg-card grid place-items-center text-primary font-light shadow-sm">
+                    {item.year}
+                  </div>
+                  <div
+                    className={`absolute z-10 w-6 h-6 rounded-full grid place-items-center text-primary ${
+                      idx % 2 === 0 ? "-left-7" : "-right-7"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <span className="block scale-[1.5]">
+                      <i
+                        className={
+                          idx % 2 === 0
+                            ? "ri-arrow-right-s-fill"
+                            : "ri-arrow-left-s-fill"
+                        }
+                      ></i>
+                    </span>
+                  </div>
                 </div>
-              </div>
-              {/* Right Column */}
-              <motion.div
-                initial={{ opacity: 0, x: idx % 2 === 0 ? -80 : 80 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, type: "spring", stiffness: 50 }}
-                className="w-full max-w-xl justify-self-center md:justify-self-start"
-              >
-                {idx % 2 !== 0 ? (
-                  <ExperienceCard {...item} />
-                ) : (
-                  <div className="hidden md:block" />
-                )}
-              </motion.div>
-            </Fragment>
-          ))}
+                {/* Right Column */}
+                <motion.div
+                  initial={{ opacity: 0, x: idx % 2 === 0 ? -80 : 80 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, type: "spring", stiffness: 50 }}
+                  className="w-full max-w-xl justify-self-center md:justify-self-start"
+                >
+                  {idx % 2 !== 0 ? (
+                    <ExperienceCard {...item} />
+                  ) : (
+                    <div className="hidden md:block" />
+                  )}
+                </motion.div>
+              </Fragment>
+            ))}
         </div>
 
         <div className="hidden lg:block lg:justify-self-start absolute right-0 -top-32">

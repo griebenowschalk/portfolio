@@ -34,26 +34,10 @@ const Projects = () => {
 
   const filteredProjects =
     index === 0
-      ? projectsData
-      : projectsData.filter((p) => p.tags.includes(projectsButtons[index]));
-
-  if (isError) {
-    return (
-      <Container id="projects" className="items-start justify-start gap-y-0">
-        <Heading title="Projects" />
-        <p className="text-muted-foreground py-6">Unable to load projects.</p>
-      </Container>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <Container id="projects" className="items-start justify-start gap-y-0">
-        <Heading title="Projects" />
-        <div className="py-10 text-muted-foreground">Loading projects…</div>
-      </Container>
-    );
-  }
+      ? (projectsData ?? [])
+      : (projectsData ?? []).filter((p) =>
+          p.tags.includes(projectsButtons[index]),
+        );
 
   return (
     <Container id="projects" className="items-start justify-start gap-y-0">
@@ -76,18 +60,30 @@ const Projects = () => {
           </motion.div>
         ))}
       </div>
-      <div data-testid="projects-container" className="w-full">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filteredProjects.map((project, i) => (
-            <motion.div
-              key={`${project.name}-${i}`}
-              layout
-              className="flex justify-center"
-            >
-              <Project {...project} index={i} />
-            </motion.div>
-          ))}
-        </div>
+      <div data-testid="projects-container" className="w-full min-h-[200px]">
+        {isError && (
+          <p className="text-muted-foreground py-10 w-full">
+            Unable to load projects.
+          </p>
+        )}
+        {isLoading && (
+          <p className="text-muted-foreground py-10 w-full">
+            Loading projects…
+          </p>
+        )}
+        {!isLoading && !isError && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {filteredProjects.map((project, i) => (
+              <motion.div
+                key={`${project.name}-${i}`}
+                layout
+                className="flex justify-center"
+              >
+                <Project {...project} index={i} />
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </Container>
   );

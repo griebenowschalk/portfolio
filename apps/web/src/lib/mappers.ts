@@ -20,10 +20,9 @@ export function mapApiProjectToProject(p: ApiProject): ProjectsData {
 }
 
 export function mapApiSkillToSkill(s: ApiSkill): SkillsData {
-  const image = s.icon?.url ?? "";
   return {
     name: s.name,
-    image: image || "/skills/placeholder.png",
+    image: s.icon?.url ?? "/skills/placeholder.png",
     description: s.description,
     link: s.link,
   };

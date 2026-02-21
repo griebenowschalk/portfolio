@@ -1,0 +1,10 @@
+# Used when building api from repo root (docker-compose context: ../..)
+node_modules
+.git
+*.log
+.env
+.env.*
+coverage
+dist
+.turbo
+.next

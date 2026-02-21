@@ -1,13 +1,24 @@
+# Build from monorepo root so file:../../packages/shared resolves.
+# docker-compose sets context to repo root and dockerfile to apps/api/Dockerfile.
+
 FROM node:20-alpine
+
+RUN apk add --no-cache wget
 
 WORKDIR /app
 
-# Install deps first for better layer caching (npm install: no lockfile in apps/api)
-COPY package.json package-lock.json* ./
+# Copy api manifest and lockfile (optional)
+COPY apps/api/package.json apps/api/package-lock.json* ./
+# Copy shared package so "file:../../packages/shared" resolves to /packages/shared
+COPY packages /packages
+
+# Install shared's deps so its prepare (tsc) can run when api installs
+RUN cd /packages/shared && npm install
+
 RUN npm install
 
-COPY . .
+# Copy api source (node_modules already in place; root .dockerignore excludes node_modules)
+COPY apps/api .
 
-# Dev: nodemon runs from docker-compose
 EXPOSE 5002
 CMD ["npm", "run", "dev"]

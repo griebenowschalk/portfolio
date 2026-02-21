@@ -9,8 +9,7 @@ async function experienceFetcher(): Promise<ExperienceData[]> {
   const res = await fetchExperience();
   if (!res.success || !res.data) return [];
   const mapped = res.data.map(mapApiExperienceToExperience);
-  // Sort by year desc (newest first)
-  return mapped.sort((a, b) => b.year - a.year);
+  return mapped;
 }
 
 export function useExperience() {

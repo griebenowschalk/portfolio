@@ -66,7 +66,7 @@ export const validate = (schema: z.ZodSchema) => {
         return res.status(400).json({
           success: false,
           error: 'Validation failed',
-          details: error.errors,
+          details: error.message,
         });
       }
       return next(error);

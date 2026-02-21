@@ -7,6 +7,7 @@ export interface SeedSkill {
   image: string;
 }
 
+// Local dev: paths for Next.js public/skills/ (served at /skills/). Production uses CDN URLs.
 export const seedSkills: SeedSkill[] = [
   { name: "HTML", image: "/skills/html.png" },
   { name: "CSS", image: "/skills/css.png" },

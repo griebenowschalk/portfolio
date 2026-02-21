@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import mongoose from "mongoose";
 import connectDB from "../config/database";
 import { env } from "../config/env";
@@ -20,9 +17,19 @@ function slugify(title: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
+const wipe = process.env.SEED_WIPE === "1" || process.argv.includes("--wipe");
+
 async function seed() {
   try {
     await connectDB();
+
+    if (wipe) {
+      await User.deleteMany({});
+      await Project.deleteMany({});
+      await Skill.deleteMany({});
+      await Experience.deleteMany({});
+      logger.info("Wiped all collections");
+    }
 
     // Admin user
     const existingAdmin = await User.findOne({ email: env.ADMIN_EMAIL });
@@ -83,7 +90,7 @@ async function seed() {
         category: "other",
         proficiency: 70,
         icon: {
-          url: s.image.startsWith("http") ? s.image : `http://localhost:3000${s.image}`,
+          url: s.image,
           key: `seed-${slugify(s.name)}`,
         },
         relatedSkills: [],
@@ -93,11 +100,20 @@ async function seed() {
     }
     logger.info(`Seeded ${seedSkills.length} skills`);
 
-    // Experience (jobs + education)
+    // Experience (jobs + education) – sort by year so startDates are chronological
     await Experience.deleteMany({});
     const currentYear = new Date().getFullYear();
-    for (let i = 0; i < seedExperience.length; i++) {
-      const e = seedExperience[i];
+    const sorted = [...seedExperience].sort((a, b) => a.year - b.year);
+    let sameYearIndex = 0;
+    let prevYear: number | null = null;
+    for (let i = 0; i < sorted.length; i++) {
+      const e = sorted[i];
+      if (e.year !== prevYear) {
+        prevYear = e.year;
+        sameYearIndex = 0;
+      }
+      const monthOffset = sameYearIndex;
+      sameYearIndex += 1;
       const isEducation = !!e.education;
       const description = e.experience[0] ?? e.title;
       const isCurrent = e.year === currentYear && !!e.company;
@@ -106,7 +122,7 @@ async function seed() {
         company: e.company,
         education: e.education,
         position: e.title,
-        startDate: new Date(e.year, 0, 1),
+        startDate: new Date(e.year, monthOffset, 1),
         endDate: isCurrent ? undefined : new Date(e.year, 11, 31),
         current: isCurrent,
         description,

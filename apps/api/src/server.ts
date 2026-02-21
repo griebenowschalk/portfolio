@@ -12,17 +12,19 @@ process.on('uncaughtException', (error: Error) => {
 // Initialize app
 const app = new App().app;
 
-// Start server
+// Start server (listen first so /health is reachable even if DB is slow or down)
 const startServer = async () => {
   try {
-    // Connect to database
-    await connectDB();
-
-    // Start listening
-    const server = app.listen(env.PORT, () => {
-      logger.info(`Server running on port ${env.PORT}`);
+    // Listen immediately so health check and tools can reach the app
+    const server = app.listen(env.PORT, "0.0.0.0", () => {
+      logger.info(`Server running on http://0.0.0.0:${env.PORT}`);
       logger.info(`Environment: ${env.NODE_ENV}`);
-      logger.info(`Health check: http://localhost:${env.PORT}/health`);
+      logger.info(`Health: http://localhost:${env.PORT}/health`);
+    });
+
+    // Connect DB after listen (non-blocking; API routes will fail until connected)
+    connectDB().catch((err) => {
+      logger.error("MongoDB connection failed:", err);
     });
 
     // Handle unhandled promise rejections

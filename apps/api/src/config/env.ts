@@ -16,7 +16,7 @@ const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
-  PORT: z.string().transform(Number).default("5000"),
+  PORT: z.string().transform(Number).default(5002),
 
   // Database
   MONGODB_URI: z.string().url(),
@@ -52,7 +52,7 @@ const parseEnv = () => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error("Invalid environment variables:");
-      error.errors.forEach((err) => {
+      error.issues.forEach((err) => {
         console.error(`  - ${err.path.join(".")}: ${err.message}`);
       });
       process.exit(1);

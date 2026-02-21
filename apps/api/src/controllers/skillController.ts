@@ -1,26 +1,28 @@
 import { NextFunction, Request, Response } from 'express';
-import Skill, { ISkill } from '../models/Skill';
+import Skill from '../models/Skill';
 import s3Service from '../services/s3Service';
-import { FilterQuery } from 'mongoose';
+import { paginate, parsePaginationQuery } from '../utils/paginate';
 
 class SkillController {
   /**
    * GET /api/v1/skills
-   * Get all skills with filtering
+   * Get all skills with filtering and pagination
    */
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const { category, isActive } = req.query;
-      const query: FilterQuery<ISkill> = {};
+      const { category, isActive, ...rest } = req.query;
+      const { page, limit } = parsePaginationQuery(rest as Record<string, unknown>);
 
-      if (category) query.category = category;
-      if (isActive) query.isActive = isActive === 'true';
+      const filter: Record<string, unknown> = {};
+      if (category) filter.category = category as string;
+      if (isActive !== undefined) filter.isActive = isActive === 'true';
 
-      const skills = await Skill.find(query).sort('order');
-      res.json({
-        success: true,
-        data: skills,
+      const { data, pagination } = await paginate(Skill, filter, {
+        page,
+        limit,
+        sort: 'order',
       });
+      res.json({ success: true, data, pagination });
     } catch (error) {
       next(error);
     }

@@ -67,8 +67,8 @@ class App {
     // API routes
     this.app.use("/api/v1", routes);
 
-    // 404 handler
-    this.app.use("*", (_req, res) => {
+    // 404 handler (Express 5 / path-to-regexp: wildcard must be named)
+    this.app.use("/{*splat}", (_req, res) => {
       res.status(404).json({
         success: false,
         error: "Route not found",

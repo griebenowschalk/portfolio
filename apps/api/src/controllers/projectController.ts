@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import type { ApiListResponse, ApiProject } from "@portfolio/shared";
 import Project from "../models/Project";
 import s3Service from "../services/s3Service";
+import { paginate, parsePaginationQuery } from "../utils/paginate";
 
 class ProjectController {
   /**
@@ -10,48 +11,27 @@ class ProjectController {
    */
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      // 1. EXTRACT QUERY PARAMETERS
-      const {
-        page = 1,
-        limit = 10,
-        category,
-        featured,
-        sort = "-createdAt",
-      } = req.query;
+      const { category, featured, sort = "-createdAt", ...rest } = req.query;
+      const { page, limit } = parsePaginationQuery(rest as Record<string, unknown>);
 
-      // 2. BUILD QUERY OBJECT
-      const query: any = {};
+      const filter: Record<string, unknown> = {};
+      if (category) filter.category = String(category);
+      if (featured) filter.featured = featured === "true";
 
-      if (category) query.category = category;
-      if (featured) query.featured = featured === "true";
+      const { data, pagination: pag } = await paginate(Project, filter, {
+        page,
+        limit,
+        sort: sort as string,
+        lean: true,
+      });
 
-      // 3. EXECUTE QUERY
-      const skip = (Number(page) - 1) * Number(limit);
-
-      // Run query and count in parallel for speed
-      const [projects, total] = await Promise.all([
-        Project.find(query)
-          .sort(sort as string)
-          .skip(skip)
-          .limit(Number(limit))
-          .lean(), // Returns plain JS objects (faster)
-        Project.countDocuments(query),
-      ]);
-
-      // 4. SEND RESPONSE (shape defined in @portfolio/shared)
       const body: ApiListResponse<ApiProject> = {
         success: true,
-        data: projects as unknown as ApiProject[],
-        pagination: {
-          page: Number(page),
-          limit: Number(limit),
-          total,
-          pages: Math.ceil(total / Number(limit)),
-        },
+        data: data as unknown as ApiProject[],
+        pagination: pag,
       };
       res.json(body);
     } catch (error) {
-      // Pass errors to error handling middleware
       next(error);
     }
   }
@@ -67,7 +47,7 @@ class ProjectController {
       const project = await Project.findOne({ slug });
 
       if (!project) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: "Project not found",
         });
@@ -88,10 +68,8 @@ class ProjectController {
    */
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      // 1. GET DATA FROM REQUEST BODY
       const projectData = req.body;
 
-      // 2. HANDLE FILE UPLOADS (if images provided)
       if (req.files && Array.isArray(req.files)) {
         const uploadedImages = await s3Service.uploadMultiple(
           req.files as Express.Multer.File[],
@@ -109,10 +87,8 @@ class ProjectController {
         }));
       }
 
-      // 3. CREATE PROJECT
       const project = await Project.create(projectData);
 
-      // 4. SEND RESPONSE
       res.status(201).json({
         success: true,
         data: project,
@@ -158,7 +134,7 @@ class ProjectController {
       });
 
       if (!project) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: "Project not found",
         });
@@ -184,10 +160,11 @@ class ProjectController {
       const project = await Project.findById(id);
 
       if (!project) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: "Project not found",
         });
+        return;
       }
 
       // Delete images from S3

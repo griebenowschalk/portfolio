@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/jwt';
 
@@ -28,10 +29,11 @@ export const authenticate = (
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'No token provided',
       });
+      return;
     }
 
     // 2. EXTRACT: Token (remove "Bearer " prefix)
@@ -46,7 +48,7 @@ export const authenticate = (
     req.user = decoded;
 
     // 5. CONTINUE: To next middleware
-    next();
+    return next();
   } catch (error) {
     if (error instanceof Error && error.name === 'JsonWebTokenError') {
       return res.status(401).json({
@@ -62,7 +64,7 @@ export const authenticate = (
       });
     }
 
-    next(error);
+    return next(error);
   }
 };
 
@@ -90,5 +92,5 @@ export const requireAdmin = (
     });
   }
 
-  next();
+  return next();
 };

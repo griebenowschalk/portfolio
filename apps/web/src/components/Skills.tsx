@@ -24,24 +24,6 @@ const Skills = () => {
   const { skills, isLoading, isError } = useSkills();
   const variants = skillsVariants;
 
-  if (isError) {
-    return (
-      <Container id="skills">
-        <Heading title="Skills" />
-        <p className="text-muted-foreground py-6">Unable to load skills.</p>
-      </Container>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <Container id="skills">
-        <Heading title="Skills" />
-        <div className="py-6 text-muted-foreground">Loading skills…</div>
-      </Container>
-    );
-  }
-
   return (
     <Container id="skills">
       <Heading title="Skills" />
@@ -50,29 +32,39 @@ const Skills = () => {
         data-testid="skills-container"
         className="w-full flex flex-wrap items-start gap-x-2 sm:gap-x-7 gap-y-2 sm:gap-y-7"
       >
-        {skills.map((skill, index) => (
-          <motion.div
-            key={skill.name}
-            custom={index}
-            variants={variants}
-            initial="hidden"
-            whileInView="visible"
-            whileHover={{ scale: 1.1 }}
-            viewport={{ margin: "100px", once: true }}
-            className="flex items-center justify-start gap-x-2 rounded-xl border bg-card border-accent lg:px-2 px-2 py-2 shadow-sm"
-          >
-            <Image
-              src={skill.image}
-              alt={skill.name}
-              width={100}
-              height={100}
-              className="h-[30px] sm:h-[50px] w-auto"
-            />
-            <p className="text-xs lg:text-sm font-medium text-card-foreground">
-              {skill.name}
-            </p>
-          </motion.div>
-        ))}
+        {isError && (
+          <p className="text-muted-foreground py-6 w-full">
+            Unable to load skills.
+          </p>
+        )}
+        {isLoading && (
+          <p className="text-muted-foreground py-6 w-full">Loading skills…</p>
+        )}
+        {!isLoading &&
+          !isError &&
+          skills.map((skill, index) => (
+            <motion.div
+              key={skill.name}
+              custom={index}
+              variants={variants}
+              initial="hidden"
+              whileInView="visible"
+              whileHover={{ scale: 1.1 }}
+              viewport={{ margin: "100px", once: true }}
+              className="flex items-center justify-start gap-x-2 rounded-xl border bg-card border-accent lg:px-2 px-2 py-2 shadow-sm"
+            >
+              <Image
+                src={skill.image}
+                alt={skill.name}
+                width={100}
+                height={100}
+                className="h-[30px] sm:h-[50px] w-auto"
+              />
+              <p className="text-xs lg:text-sm font-medium text-card-foreground">
+                {skill.name}
+              </p>
+            </motion.div>
+          ))}
       </div>
     </Container>
   );

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import logger from "../utils/logger";
 
 // Custom error class
@@ -19,7 +19,6 @@ export const errorHandler = (
   err: Error,
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
   // Log error
   logger.error("Error:", {
@@ -78,7 +77,7 @@ export const errorHandler = (
   }
 
   // Default error
-  res.status(500).json({
+  return res.status(500).json({
     success: false,
     error:
       process.env.NODE_ENV === "production"

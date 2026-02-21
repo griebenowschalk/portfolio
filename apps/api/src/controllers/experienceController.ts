@@ -1,18 +1,27 @@
 import { NextFunction, Request, Response } from 'express';
 import Experience from '../models/Experience';
+import type { ExperienceType } from '../models/Experience';
+import { paginate, parsePaginationQuery } from '../utils/paginate';
 
 class ExperienceController {
   /**
    * GET /api/v1/experience
-   * Get all experience
+   * Get all experience with filtering and pagination
    */
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const experience = await Experience.find();
-      res.json({
-        success: true,
-        data: experience,
+      const { type, sort = "startDate", ...rest } = req.query;
+      const { page, limit } = parsePaginationQuery(rest as Record<string, unknown>);
+
+      const filter: Record<string, unknown> = {};
+      if (type) filter.type = type as ExperienceType;
+
+      const { data, pagination } = await paginate(Experience, filter, {
+        page,
+        limit,
+        sort: sort as string,
       });
+      res.json({ success: true, data, pagination });
     } catch (error) {
       next(error);
     }

@@ -145,14 +145,13 @@ projectSchema.virtual("featuredImage").get(function () {
 });
 
 // Pre-save middleware to generate slug
-projectSchema.pre("save", function (next) {
+projectSchema.pre("save", function () {
   if (this.isModified("title") && !this.slug) {
     this.slug = this.title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
   }
-  next();
 });
 
 // Ensure unique slug
