@@ -146,10 +146,22 @@ Only required for image uploads. Skip if you don't need image hosting yet.
 
 ## Deploy API to Railway
 
-1. [railway.app](https://railway.app) → New Project → Deploy from GitHub repo
-2. Select repo → **Root directory:** `apps/api`
-3. **Build command:** `npm install && npm run build`
-4. **Start command:** `npm run start`
+### Build from monorepo root
+
+The API Dockerfile and workspace setup expect the **build context to be the repo root** so `apps/api` and `packages/shared` are both visible.
+
+If you deploy using a Dockerfile:
+
+- **Build context / Root directory:** repo root (where `apps/` and `packages/` live)
+- **Dockerfile path:** `apps/api/Dockerfile`
+
+If you deploy using Railway’s Node build (no Dockerfile):
+
+- **Root directory:** repo root
+- **Build command:** `npm run build:api`
+- **Start command:** `npm run start:api`
+
+> The root `package.json` exposes workspace-aware scripts; always run API build/start from the monorepo root so `file:../../packages/shared` resolves correctly.
 
 ### Environment variables
 
@@ -158,42 +170,110 @@ Set all of these in the Railway dashboard under Variables:
 ```env
 NODE_ENV=production
 PORT=5002
-MONGODB_URI=mongodb+srv://...
+
+# IMPORTANT: include an explicit db name so prod doesn't silently use the default "test" db
+MONGODB_URI=mongodb+srv://<user>:<pass>@cluster0.xxxxx.mongodb.net/portfolio?appName=Cluster0
+
 JWT_SECRET=<64-char-random>
 JWT_EXPIRE=7d
 JWT_REFRESH_SECRET=<64-char-random-different>
 JWT_REFRESH_EXPIRE=30d
-FRONTEND_URL=https://your-portfolio.vercel.app
+
+FRONTEND_URL=https://your-portfolio.netlify.app
 CMS_URL=https://your-cms.netlify.app
+
 AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
 AWS_REGION=eu-west-1
 AWS_BUCKET_NAME=sgriebenow-portfolio-assets
 CLOUDFRONT_URL=https://d3fkfnugvrux85.cloudfront.net
+
 ADMIN_EMAIL=you@example.com
 ADMIN_PASSWORD=YourSecurePassword123!
-ADMIN_NAME=Schalk Griebenow
+ADMIN_NAME=Admin User
+
 LOG_LEVEL=info
 ```
 
-> `FRONTEND_URL` and `CMS_URL` control CORS. During initial setup use `http://localhost:3000` and `http://localhost:5173`, then update to production URLs once deployed.
+> `FRONTEND_URL` and `CMS_URL` control CORS. During initial setup you can use `http://localhost:3000` and `http://localhost:5173`, then update to production URLs once deployed.
 
-### Seed the database
+### Seeding the production database
 
-Railway dashboard → your service → **Shell** tab:
+The seed script lives at `apps/api/src/scripts/seed.ts` and is wired via the root script:
+
 ```bash
-npm run seed
+npm run seed:api   # from the repo root
 ```
+
+It uses the same env loader as the API (`apps/api/src/config/env.ts`):
+
+- Locally:
+  - If `apps/api/.env.development` exists, it is loaded first.
+  - Then `apps/api/.env` is loaded and overrides any overlapping keys.
+- In Railway:
+  - There are no `.env` files in the container; values come entirely from service variables.
+
+#### Local seeding against production
+
+To run the seed from your machine **against the production Atlas cluster**:
+
+```bash
+cd apps/api
+mv .env.development .env.development.bak    # temporarily disable dev env
+cp .env.production .env                     # .env now contains prod URI and creds
+
+cd ../..                                     # back to repo root
+npm run seed:api
+
+rm apps/api/.env
+mv apps/api/.env.development.bak apps/api/.env.development
+```
+
+This guarantees the seed uses the same `MONGODB_URI` as production, including the explicit `.../portfolio` db name.
+
+#### Seeding from Railway
+
+If your Railway UI does not expose a "Run one-off command" option, create a temporary **seeder service**:
+
+1. New Railway service → deploy from the **same GitHub repo/branch** as the API.
+2. Copy the API service variables into the seeder service (at minimum `MONGODB_URI`, `ADMIN_*`, JWT, and AWS if you seed assets later).
+3. Set the **start command** for the seeder service to:
+   ```bash
+   npm run seed:api
+   ```
+4. Deploy that service once and watch logs:
+   - You should see:
+     - `Created admin: ...` or `Admin already exists: ...`
+     - `Seeded X projects`
+     - `Seeded Y skills`
+     - `Seeded Z experiences`
+     - `Seed completed`
+5. After a successful run, pause or delete the seeder service so it does not keep re-seeding.
 
 ---
 
 ## Deploy Web to Netlify
 
-1. [netlify.com](https://netlify.com) → New site → Import from GitHub
-2. **Base directory:** `apps/web`
-3. **Build command:** `npm run build`
-4. **Publish directory:** `apps/web/.next`
-5. **Framework preset:** Next.js (Netlify will auto-detect)
+The web app has its own `netlify.toml` in `apps/web/netlify.toml`. Netlify will read it when the **base directory** is `apps/web`:
+
+```toml
+[build]
+  # This file lives in apps/web, but we want Netlify to run
+  # npm install/build from the monorepo root.
+  base = ".."
+  command = "npm run build:web"
+  publish = "apps/web/.next"
+
+[build.environment]
+  NPM_FLAGS = "--ignore-scripts"
+```
+
+Netlify UI settings for the web site:
+
+- **Base directory:** `apps/web`
+- **Build command:** leave blank or `npm run build:web` (the toml already sets it)
+- **Publish directory:** `apps/web/.next`
+- **Framework preset:** Next.js
 
 ### Environment variables (Netlify → Site settings → Environment variables)
 
@@ -208,10 +288,16 @@ Netlify auto-deploys on every push to `main` (or whatever branch you select).
 
 ## Deploy CMS to Netlify
 
-1. [netlify.com](https://netlify.com) → New site → Import from GitHub
-2. **Base directory:** `apps/cms`
-3. **Build command:** `npm run build`
-4. **Publish directory:** `apps/cms/dist`
+Create a **separate Netlify site** for the CMS (do not try to serve the CMS bundle from the web site's Next.js app).
+
+Netlify UI settings for the CMS site (monorepo aware):
+
+- **Base directory:** `.` (repo root)
+- **Package directory:** `./apps/cms`
+- **Build command:** `npm run build:cms`
+- **Publish directory:** `./apps/cms/dist`
+
+> Because installs run from the repo root, workspace dependencies and `@portfolio/shared` resolve correctly.
 
 ### Environment variables (Netlify → Site settings → Environment variables)
 
@@ -221,12 +307,14 @@ VITE_API_URL=https://your-api.railway.app
 
 ### SPA routing fix
 
-Create `apps/cms/public/_redirects`:
-```
+`apps/cms` is a Vite SPA. To avoid Netlify 404s on refresh:
+
+```text
+apps/cms/public/_redirects
 /*  /index.html  200
 ```
 
-Without this, refreshing any CMS route returns a 404.
+Commit this file — Netlify copies it into `dist` and serves `index.html` for all CMS routes.
 
 ---
 

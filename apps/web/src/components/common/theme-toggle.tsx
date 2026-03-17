@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { reactLocalStorage } from "reactjs-localstorage";
 
 interface ThemeToggleProps {
@@ -11,10 +11,8 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ children }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const darkTheme = reactLocalStorage.get("theme") === "dark";
     if (darkTheme) {
       setTheme("dark");
@@ -22,16 +20,6 @@ export function ThemeToggle({ children }: ThemeToggleProps) {
       setTheme("light");
     }
   }, [setTheme]);
-
-  if (!mounted) {
-    return (
-      <div className="fixed top-4 right-4 z-50 flex gap-2">
-        <Button variant="outline">
-          <i className="ri-moon-fill text-primary"></i>
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <main>
