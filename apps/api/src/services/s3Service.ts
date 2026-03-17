@@ -1,15 +1,21 @@
-import { s3, s3Config } from "../config/aws";
-import sharp from "sharp";
-import { v4 as uuidv4 } from "uuid";
-import logger from "../utils/logger";
-import { PutObjectRequest, DeleteObjectRequest } from "aws-sdk/clients/s3";
+import { s3Client, s3Config } from '../config/aws';
+import sharp from 'sharp';
+import { v4 as uuidv4 } from 'uuid';
+import logger from '../utils/logger';
+import {
+  PutObjectCommand,
+  DeleteObjectCommand,
+  HeadObjectCommand,
+  GetObjectCommand,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 interface UploadOptions {
   folder?: string;
   resize?: {
     width?: number;
     height?: number;
-    fit?: "cover" | "contain" | "fill" | "inside" | "outside";
+    fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
   };
   generateThumbnail?: boolean;
   quality?: number;
@@ -45,11 +51,11 @@ class S3Service {
    */
   async uploadImage(
     file: Express.Multer.File,
-    options: UploadOptions = {},
+    options: UploadOptions = {}
   ): Promise<UploadResult> {
     try {
       const {
-        folder = "images",
+        folder = 'images',
         resize,
         generateThumbnail = false,
         quality = 80,
@@ -65,7 +71,7 @@ class S3Service {
       // Resize if specified
       if (resize) {
         sharpInstance = sharpInstance.resize(resize.width, resize.height, {
-          fit: resize.fit || "cover",
+          fit: resize.fit || 'cover',
         });
       }
 
@@ -73,19 +79,19 @@ class S3Service {
       imageBuffer = await sharpInstance.webp({ quality }).toBuffer();
 
       // Upload main image
-      const uploadParams: PutObjectRequest = {
+      const uploadParams = {
         Bucket: this.bucket,
         Key: key,
         Body: imageBuffer,
-        ContentType: "image/webp",
-        CacheControl: "max-age=31536000", // 1 year
+        ContentType: 'image/webp',
+        CacheControl: 'max-age=31536000', // 1 year
         Metadata: {
           originalName: file.originalname,
           uploadedAt: new Date().toISOString(),
         },
       };
 
-      await s3.upload(uploadParams).promise();
+      await s3Client.send(new PutObjectCommand(uploadParams));
       const url = this.getUrl(key);
 
       logger.info(`Image uploaded successfully: ${key}`);
@@ -95,17 +101,17 @@ class S3Service {
       if (generateThumbnail) {
         const thumbnailKey = `${folder}/thumbnails/${fileId}.webp`;
         const thumbnailBuffer = await sharp(file.buffer)
-          .resize(300, 300, { fit: "cover" })
+          .resize(300, 300, { fit: 'cover' })
           .webp({ quality: 70 })
           .toBuffer();
 
-        await s3
-          .upload({
+        await s3Client.send(
+          new PutObjectCommand({
             ...uploadParams,
             Key: thumbnailKey,
             Body: thumbnailBuffer,
           })
-          .promise();
+        );
 
         thumbnailUrl = this.getUrl(thumbnailKey);
         logger.info(`Thumbnail generated: ${thumbnailKey}`);
@@ -113,8 +119,8 @@ class S3Service {
 
       return { url, thumbnailUrl, key };
     } catch (error) {
-      logger.error("S3 upload error:", error);
-      throw new Error("Failed to upload image to S3");
+      logger.error('S3 upload error:', error);
+      throw new Error('Failed to upload image to S3');
     }
   }
 
@@ -123,7 +129,7 @@ class S3Service {
    */
   async uploadMultiple(
     files: Express.Multer.File[],
-    options: UploadOptions = {},
+    options: UploadOptions = {}
   ): Promise<UploadResult[]> {
     return Promise.all(files.map((file) => this.uploadImage(file, options)));
   }
@@ -133,16 +139,16 @@ class S3Service {
    */
   async deleteFile(key: string): Promise<void> {
     try {
-      const deleteParams: DeleteObjectRequest = {
+      const deleteParams = {
         Bucket: this.bucket,
         Key: key,
       };
 
-      await s3.deleteObject(deleteParams).promise();
+      await s3Client.send(new DeleteObjectCommand(deleteParams));
       logger.info(`File deleted from S3: ${key}`);
     } catch (error) {
-      logger.error("S3 delete error:", error);
-      throw new Error("Failed to delete file from S3");
+      logger.error('S3 delete error:', error);
+      throw new Error('Failed to delete file from S3');
     }
   }
 
@@ -157,11 +163,14 @@ class S3Service {
    * Get signed URL for temporary access
    */
   getSignedUrl(key: string, expiresIn: number = 3600): string {
-    return s3.getSignedUrl("getObject", {
-      Bucket: this.bucket,
-      Key: key,
-      Expires: expiresIn,
-    });
+    return getSignedUrl(
+      s3Client,
+      new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+      }),
+      { expiresIn }
+    );
   }
 
   /**
@@ -169,14 +178,15 @@ class S3Service {
    */
   async fileExists(key: string): Promise<boolean> {
     try {
-      await s3
-        .headObject({
+      await s3Client.send(
+        new HeadObjectCommand({
           Bucket: this.bucket,
           Key: key,
         })
-        .promise();
+      );
       return true;
     } catch (error) {
+      console.error('S3 file exists error:', error);
       return false;
     }
   }

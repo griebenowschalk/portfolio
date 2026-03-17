@@ -12,7 +12,7 @@
    - [MongoDB Atlas](#mongodb-atlas)
    - [AWS S3 + CloudFront](#aws-s3--cloudfront)
 4. [Deploy API to Railway](#deploy-api-to-railway)
-5. [Deploy Web to Vercel](#deploy-web-to-vercel)
+5. [Deploy Web to Netlify](#deploy-web-to-netlify)
 6. [Deploy CMS to Netlify](#deploy-cms-to-netlify)
 7. [Environment Variable Reference](#environment-variable-reference)
 8. [CI/CD](#cicd)
@@ -27,7 +27,7 @@
 ```
 apps/
   api/   Express API (Railway)         :5002  /api/v1/*
-  web/   Next.js portfolio (Vercel)    :3000
+  web/   Next.js portfolio (Netlify)   :3000
   cms/   Vite React admin (Netlify)    :5173
 packages/
   shared/ TypeScript types shared by api + web
@@ -187,20 +187,22 @@ npm run seed
 
 ---
 
-## Deploy Web to Vercel
+## Deploy Web to Netlify
 
-1. [vercel.com](https://vercel.com) → New Project → Import from GitHub
-2. **Root directory:** `apps/web`
-3. **Framework preset:** Next.js (auto-detected)
+1. [netlify.com](https://netlify.com) → New site → Import from GitHub
+2. **Base directory:** `apps/web`
+3. **Build command:** `npm run build`
+4. **Publish directory:** `apps/web/.next`
+5. **Framework preset:** Next.js (Netlify will auto-detect)
 
-### Environment variables (Vercel → Settings → Environment Variables)
+### Environment variables (Netlify → Site settings → Environment variables)
 
 ```env
 NEXT_PUBLIC_API_URL=https://your-api.railway.app
 NEXT_PUBLIC_CLOUDFRONT_URL=https://d3fkfnugvrux85.cloudfront.net
 ```
 
-Vercel auto-deploys on every push to `main`.
+Netlify auto-deploys on every push to `main` (or whatever branch you select).
 
 ---
 
@@ -309,8 +311,8 @@ Trigger manually anytime: GitHub → Actions → "MongoDB Keep-Alive" → Run wo
 - [ ] Projects, Skills, Experience load on the web portfolio
 - [ ] Images uploaded via CMS appear via CloudFront on the web
 - [ ] `FRONTEND_URL` + `CMS_URL` in Railway match real deployed URLs
-- [ ] `NEXT_PUBLIC_API_URL` in Vercel points to Railway
-- [ ] `VITE_API_URL` in Netlify points to Railway
+- [ ] `NEXT_PUBLIC_API_URL` in Netlify (web) points to Railway
+- [ ] `VITE_API_URL` in Netlify (cms) points to Railway
 - [ ] `API_URL` repository variable set in GitHub
 - [ ] Admin password changed from seed default
 - [ ] `apps/cms/public/_redirects` file committed
