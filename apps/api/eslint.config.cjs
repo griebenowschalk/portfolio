@@ -5,19 +5,19 @@ const tseslint = require("typescript-eslint");
 module.exports = tseslint.config(
   ...tseslint.configs.recommended,
   {
-    files: ["*.config.js", "eslint.config.js"],
+    files: ["apps/api/eslint.config.cjs"],
     rules: {
       "@typescript-eslint/no-require-imports": "off",
     },
   },
   {
-    files: ["src/**/*.ts"],
+    files: ["apps/api/src/**/*.ts"],
     languageOptions: {
       parserOptions: {
         ecmaVersion: 2022,
         sourceType: "module",
         tsconfigRootDir: __dirname,
-        project: true,
+        project: ["./tsconfig.json"],
       },
       globals: { node: true },
     },
@@ -27,3 +27,4 @@ module.exports = tseslint.config(
     },
   }
 );
+

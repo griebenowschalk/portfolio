@@ -10,8 +10,10 @@ class ExperienceController {
    */
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const { type, sort = "startDate", ...rest } = req.query;
-      const { page, limit } = parsePaginationQuery(rest as Record<string, unknown>);
+      const { type, sort = 'startDate', ...rest } = req.query;
+      const { page, limit } = parsePaginationQuery(
+        rest as Record<string, unknown>
+      );
 
       const filter: Record<string, unknown> = {};
       if (type) filter.type = type as ExperienceType;
@@ -75,7 +77,15 @@ class ExperienceController {
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const experience = await Experience.findByIdAndUpdate(id, req.body, {
+      const expData: Record<string, unknown> = { ...req.body };
+      const removeLogo = expData.remove_logo === 'true';
+      delete expData.remove_logo;
+
+      const updateQuery = removeLogo
+        ? { $set: expData, $unset: { logo: '' } }
+        : expData;
+
+      const experience = await Experience.findByIdAndUpdate(id, updateQuery, {
         new: true,
       });
       if (!experience) {

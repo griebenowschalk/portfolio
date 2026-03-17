@@ -1,5 +1,5 @@
 {
-  "name": "portfolio-cms-backend",
+  "name": "api",
   "version": "1.0.0",
   "description": "Backend API for portfolio CMS with AWS S3 integration",
   "main": "dist/server.js",

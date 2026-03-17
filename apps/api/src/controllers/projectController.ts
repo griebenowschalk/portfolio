@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import type { ApiListResponse, ApiProject } from "@portfolio/shared";
-import Project from "../models/Project";
-import s3Service from "../services/s3Service";
-import { paginate, parsePaginationQuery } from "../utils/paginate";
+import { Request, Response, NextFunction } from 'express';
+import type { ApiListResponse, ApiProject } from '@portfolio/shared';
+import Project from '../models/Project';
+import s3Service from '../services/s3Service';
+import { paginate, parsePaginationQuery } from '../utils/paginate';
 
 class ProjectController {
   /**
@@ -11,12 +11,14 @@ class ProjectController {
    */
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const { category, featured, sort = "-createdAt", ...rest } = req.query;
-      const { page, limit } = parsePaginationQuery(rest as Record<string, unknown>);
+      const { category, featured, sort = '-createdAt', ...rest } = req.query;
+      const { page, limit } = parsePaginationQuery(
+        rest as Record<string, unknown>
+      );
 
       const filter: Record<string, unknown> = {};
       if (category) filter.category = String(category);
-      if (featured) filter.featured = featured === "true";
+      if (featured) filter.featured = featured === 'true';
 
       const { data, pagination: pag } = await paginate(Project, filter, {
         page,
@@ -49,7 +51,7 @@ class ProjectController {
       if (!project) {
         res.status(404).json({
           success: false,
-          error: "Project not found",
+          error: 'Project not found',
         });
       }
 
@@ -74,10 +76,10 @@ class ProjectController {
         const uploadedImages = await s3Service.uploadMultiple(
           req.files as Express.Multer.File[],
           {
-            folder: "projects",
-            resize: { width: 1200, height: 800, fit: "cover" },
+            folder: 'projects',
+            resize: { width: 1200, height: 800, fit: 'cover' },
             generateThumbnail: true,
-          },
+          }
         );
 
         projectData.images = uploadedImages.map((img, index) => ({
@@ -105,38 +107,51 @@ class ProjectController {
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const updates = req.body;
+      const updates: Record<string, unknown> = { ...req.body };
+      const removeImages = updates.remove_images === 'true';
+      delete updates.remove_images;
 
-      // Handle new images
-      if (req.files && Array.isArray(req.files)) {
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        // Replace images: delete existing from S3 then upload new ones
+        const existing = await Project.findById(id).lean();
+        if (existing?.images?.length) {
+          await Promise.all(
+            existing.images.map((img) => s3Service.deleteFile(img.key))
+          );
+        }
         const uploadedImages = await s3Service.uploadMultiple(
           req.files as Express.Multer.File[],
           {
-            folder: "projects",
-            resize: { width: 1200, height: 800, fit: "cover" },
+            folder: 'projects',
+            resize: { width: 1200, height: 800, fit: 'cover' },
             generateThumbnail: true,
-          },
+          }
         );
-
-        // Add new images to existing ones
-        updates.images = [
-          ...(updates.images || []),
-          ...uploadedImages.map((img) => ({
-            ...img,
-            alt: updates.title,
-          })),
-        ];
+        updates.images = uploadedImages.map((img, index) => ({
+          ...img,
+          alt: updates.title,
+          order: index,
+        }));
+      } else if (removeImages) {
+        // Remove all images without replacement
+        const existing = await Project.findById(id).lean();
+        if (existing?.images?.length) {
+          await Promise.all(
+            existing.images.map((img) => s3Service.deleteFile(img.key))
+          );
+        }
+        updates.images = [];
       }
 
       const project = await Project.findByIdAndUpdate(id, updates, {
-        new: true, // Return updated document
-        runValidators: true, // Run schema validations
+        new: true,
+        runValidators: true,
       });
 
       if (!project) {
         res.status(404).json({
           success: false,
-          error: "Project not found",
+          error: 'Project not found',
         });
       }
 
@@ -162,7 +177,7 @@ class ProjectController {
       if (!project) {
         res.status(404).json({
           success: false,
-          error: "Project not found",
+          error: 'Project not found',
         });
         return;
       }
@@ -170,7 +185,7 @@ class ProjectController {
       // Delete images from S3
       if (project.images.length > 0) {
         await Promise.all(
-          project.images.map((img) => s3Service.deleteFile(img.key)),
+          project.images.map((img) => s3Service.deleteFile(img.key))
         );
       }
 
@@ -178,7 +193,7 @@ class ProjectController {
 
       res.json({
         success: true,
-        message: "Project deleted successfully",
+        message: 'Project deleted successfully',
       });
     } catch (error) {
       next(error);

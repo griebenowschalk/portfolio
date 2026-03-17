@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
-import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+} from '../utils/jwt';
 
 class AuthController {
   /**
@@ -89,7 +93,7 @@ class AuthController {
             email: user.email,
             role: user.role,
           },
-          token,
+          accessToken: token,
           refreshToken,
         },
       });
@@ -126,6 +130,51 @@ class AuthController {
           },
         },
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/v1/auth/refresh
+   * Exchange a valid refresh token for a new access token
+   */
+  async refresh(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { refreshToken } = req.body;
+
+      if (!refreshToken) {
+        res
+          .status(400)
+          .json({ success: false, error: 'Refresh token required' });
+        return;
+      }
+
+      let payload: ReturnType<typeof verifyRefreshToken>;
+      try {
+        payload = verifyRefreshToken(refreshToken);
+      } catch {
+        res
+          .status(401)
+          .json({ success: false, error: 'Invalid or expired refresh token' });
+        return;
+      }
+
+      const user = await User.findById(payload.userId);
+      if (!user || !user.isActive) {
+        res
+          .status(401)
+          .json({ success: false, error: 'User not found or inactive' });
+        return;
+      }
+
+      const accessToken = generateAccessToken({
+        userId: user._id.toString(),
+        email: user.email,
+        role: user.role,
+      });
+
+      res.status(200).json({ success: true, data: { accessToken } });
     } catch (error) {
       next(error);
     }

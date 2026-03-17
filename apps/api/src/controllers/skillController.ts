@@ -11,7 +11,9 @@ class SkillController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const { category, isActive, ...rest } = req.query;
-      const { page, limit } = parsePaginationQuery(rest as Record<string, unknown>);
+      const { page, limit } = parsePaginationQuery(
+        rest as Record<string, unknown>
+      );
 
       const filter: Record<string, unknown> = {};
       if (category) filter.category = category as string;
@@ -88,39 +90,49 @@ class SkillController {
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const skillData = req.body;
+      const skillData: Record<string, unknown> = { ...req.body };
+      const removeIcon = skillData.remove_icon === 'true';
+      delete skillData.remove_icon;
 
-      // Handle image upload
-      // If updating, check if an icon already exists for this skill (by name or unique field)
-      // If exists, delete the old one before uploading the new one
-      if (req.file && skillData.icon && skillData.icon.key) {
-        const exists = await s3Service.fileExists(skillData.icon.key);
-        if (exists) {
-          await s3Service.deleteFile(skillData.icon.key);
-        }
-      }
       if (req.file) {
-        const uploadedImage = await s3Service.uploadImage(req.file, {
+        // Replace icon: delete old one from S3 if it exists, then upload new
+        const existing = await Skill.findById(id).lean();
+        const existingIcon = (existing as any)?.icon;
+        if (existingIcon?.key) {
+          const exists = await s3Service.fileExists(existingIcon.key);
+          if (exists) await s3Service.deleteFile(existingIcon.key);
+        }
+        skillData.icon = await s3Service.uploadImage(req.file, {
           folder: 'skills',
         });
-        skillData.icon = uploadedImage;
+      } else if (removeIcon) {
+        // Remove icon without replacement
+        const existing = await Skill.findById(id).lean();
+        const existingIcon = (existing as any)?.icon;
+        if (existingIcon?.key) {
+          await s3Service.deleteFile(existingIcon.key);
+        }
+        const skill = await Skill.findByIdAndUpdate(
+          id,
+          { $set: skillData, $unset: { icon: '' } },
+          { new: true }
+        );
+        if (!skill) {
+          res.status(404).json({ success: false, error: 'Skill not found' });
+          return;
+        }
+        res.json({ success: true, data: skill });
+        return;
       }
 
       const skill = await Skill.findByIdAndUpdate(id, skillData, { new: true });
 
       if (!skill) {
-        res.status(404).json({
-          success: false,
-          error: 'Skill not found',
-        });
-
+        res.status(404).json({ success: false, error: 'Skill not found' });
         return;
       }
 
-      res.json({
-        success: true,
-        data: skill,
-      });
+      res.json({ success: true, data: skill });
     } catch (error) {
       next(error);
     }

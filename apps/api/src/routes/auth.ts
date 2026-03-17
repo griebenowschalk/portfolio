@@ -7,9 +7,16 @@ const router = Router();
 
 // PUBLIC
 router.post('/login', validateLogin, authController.login);
+router.post('/refresh', authController.refresh);
 
 // ADMIN ONLY
-router.post('/register', authenticate, requireAdmin, validateRegister, authController.register);
+router.post(
+  '/register',
+  authenticate,
+  requireAdmin,
+  validateRegister,
+  authController.register
+);
 
 // PROTECTED ROUTES
 
