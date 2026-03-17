@@ -162,7 +162,7 @@ class S3Service {
   /**
    * Get signed URL for temporary access
    */
-  getSignedUrl(key: string, expiresIn: number = 3600): string {
+  async getSignedUrl(key: string, expiresIn: number = 3600): Promise<string> {
     return getSignedUrl(
       s3Client,
       new GetObjectCommand({
