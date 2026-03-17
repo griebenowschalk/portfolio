@@ -37,7 +37,7 @@ describe("Hero", () => {
 
   it("renders hero talk to me button correctly", () => {
     render(<Hero />);
-    const talkToMeButton = screen.getByRole("button", { name: /talk to me/i });
+    const talkToMeButton = screen.getByRole("button", { name: /say hi!/i });
     expect(talkToMeButton).toBeInTheDocument();
 
     const hiSpan = screen.getByTestId("hi-span");

@@ -3,9 +3,27 @@ import { Achievement } from "@/types/about-me";
 export const achievements: Achievement[] = [
   {
     number: 20,
-    title: "Github Repos",
+    title: "GitHub Repos",
     icon: "ri-github-fill",
-    description: "I have a GitHub account",
+    description: "Personal and side projects on GitHub",
+  },
+  {
+    number: 8,
+    title: "Years Experience",
+    icon: "ri-code-s-slash-line",
+    description: "Building web and mobile applications professionally",
+  },
+  {
+    number: 15,
+    title: "Projects Built",
+    icon: "ri-rocket-line",
+    description: "Personal and professional projects built over the years",
+  },
+  {
+    number: 5,
+    title: "Core Technologies",
+    icon: "ri-stack-line",
+    description: "React, Next.js, TypeScript, Node.js, and React Native",
   },
 ];
 

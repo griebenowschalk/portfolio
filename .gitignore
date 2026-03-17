@@ -18,7 +18,6 @@ apps/web/coverage/
 # next.js (apps/web)
 apps/web/.next/
 apps/web/out/
-/docs
 
 # production
 /build

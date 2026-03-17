@@ -2,6 +2,7 @@ import useSWR from "swr";
 import { fetchExperience } from "@/lib/api";
 import { mapApiExperienceToExperience } from "@/lib/mappers";
 import type { ExperienceData } from "@/types/experience";
+import { experience as staticExperience } from "@/data/experience";
 
 const EXPERIENCE_KEY = "experience";
 
@@ -22,8 +23,9 @@ export function useExperience() {
     },
   );
   return {
-    experience: data ?? [],
-    isLoading,
+    // Fall back to static data when API errors so the portfolio is never blank
+    experience: data ?? (error ? staticExperience : []),
+    isLoading: isLoading && !error,
     isError: !!error,
     error,
     mutate,

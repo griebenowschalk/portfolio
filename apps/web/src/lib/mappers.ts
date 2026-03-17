@@ -16,6 +16,7 @@ export function mapApiProjectToProject(p: ApiProject): ProjectsData {
     link,
     tags: p.technologies ?? [],
     inProgress: p.status === "in-progress",
+    featured: p.featured ?? false,
   };
 }
 

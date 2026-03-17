@@ -1,15 +1,21 @@
 import Experience from "@/components/Experience";
 import { experience } from "@/data/experience";
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
+
+const mockUseExperience = vi.fn();
 
 vi.mock("@/hooks/useExperience", () => ({
-  useExperience: () => ({
+  useExperience: () => mockUseExperience(),
+}));
+
+beforeEach(() => {
+  mockUseExperience.mockReturnValue({
     experience,
     isLoading: false,
     isError: false,
-  }),
-}));
+  });
+});
 
 describe("Experience", () => {
   it("data integrity test", () => {
@@ -49,5 +55,35 @@ describe("Experience", () => {
       const experienceCard = within(item).getByText(experience[index].title);
       expect(experienceCard).toBeInTheDocument();
     }
+  });
+
+  it("shows loading state while fetching", () => {
+    mockUseExperience.mockReturnValueOnce({
+      experience: [],
+      isLoading: true,
+      isError: false,
+    });
+    render(<Experience />);
+    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("experience-container")).queryAllByTestId(
+        "experience-item",
+      ),
+    ).toHaveLength(0);
+  });
+
+  it("shows error message when API fails", () => {
+    mockUseExperience.mockReturnValueOnce({
+      experience: [],
+      isLoading: false,
+      isError: true,
+    });
+    render(<Experience />);
+    expect(screen.getByText(/unable to load experience/i)).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("experience-container")).queryAllByTestId(
+        "experience-item",
+      ),
+    ).toHaveLength(0);
   });
 });

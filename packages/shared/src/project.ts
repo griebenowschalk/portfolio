@@ -22,4 +22,5 @@ export interface ApiProject {
     documentation?: string;
   };
   order?: number;
+  updatedAt?: Date;
 }

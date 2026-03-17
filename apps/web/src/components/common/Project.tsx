@@ -10,6 +10,7 @@ const Project = ({
   index,
   link,
   inProgress,
+  featured,
 }: ProjectsData) => {
   const [show, setShow] = useState(false);
   return (
@@ -35,7 +36,9 @@ const Project = ({
       className={`relative w-full md:w-[300px] h-max rounded-lg cursor-pointer overflow-hidden border-2 ${
         inProgress
           ? "border-amber-500 dark:border-amber-400 ring-2 ring-amber-500/30 dark:ring-amber-400/30"
-          : "border-accent"
+          : featured
+            ? "border-violet-500 dark:border-violet-400 ring-2 ring-violet-500/20 dark:ring-violet-400/20"
+            : "border-accent"
       }`}
     >
       <div className="relative w-full aspect-square overflow-hidden rounded-lg">
@@ -47,6 +50,14 @@ const Project = ({
           className="size-full object-cover object-top opacity-70"
         />
       </div>
+      {featured && (
+        <span
+          className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-md bg-violet-600 px-2 py-0.5 text-xs font-semibold text-white shadow-sm dark:bg-violet-500"
+          data-testid="project-featured-badge"
+        >
+          ★ Featured
+        </span>
+      )}
       {inProgress && (
         <span
           className="absolute top-2 right-2 z-10 rounded-md bg-amber-500 px-2 py-0.5 text-xs font-semibold text-white shadow-sm dark:bg-amber-400 dark:text-black"

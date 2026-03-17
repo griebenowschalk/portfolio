@@ -1,15 +1,21 @@
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import Projects from "@/components/Projects";
 import { projectsButtons, projectsData } from "@/data/projects";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
+
+const mockUseProjects = vi.fn();
 
 vi.mock("@/hooks/useProjects", () => ({
-  useProjects: () => ({
+  useProjects: () => mockUseProjects(),
+}));
+
+beforeEach(() => {
+  mockUseProjects.mockReturnValue({
     projects: projectsData,
     isLoading: false,
     isError: false,
-  }),
-}));
+  });
+});
 
 describe("Project", () => {
   it("data integrity test", () => {
@@ -109,5 +115,45 @@ describe("Project", () => {
       fireEvent.mouseOut(project);
       expect(overlay).toHaveAttribute("aria-hidden", "true");
     }
+  });
+
+  it("shows loading state while fetching", () => {
+    mockUseProjects.mockReturnValueOnce({
+      projects: [],
+      isLoading: true,
+      isError: false,
+    });
+    render(<Projects />);
+    expect(screen.getByText(/loading projects/i)).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("projects-container")).queryAllByRole("img"),
+    ).toHaveLength(0);
+  });
+
+  it("shows error message when API fails and no fallback data", () => {
+    mockUseProjects.mockReturnValueOnce({
+      projects: [],
+      isLoading: false,
+      isError: true,
+    });
+    render(<Projects />);
+    expect(screen.getByText(/unable to load projects/i)).toBeInTheDocument();
+  });
+
+  it("renders fallback static data when API fails with data present", () => {
+    mockUseProjects.mockReturnValueOnce({
+      projects: projectsData,
+      isLoading: false,
+      isError: true,
+    });
+    render(<Projects />);
+    // Fallback data is shown — no error message, projects visible
+    expect(
+      screen.queryByText(/unable to load projects/i),
+    ).not.toBeInTheDocument();
+    const imgs = within(screen.getByTestId("projects-container")).getAllByRole(
+      "img",
+    );
+    expect(imgs.length).toBe(projectsData.length);
   });
 });

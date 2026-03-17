@@ -23,6 +23,7 @@ export const projectsData: ProjectsData[] = [
     link: "https://github.com/griebenowschalk/portfolio",
     tags: ["Next.js", "TailwindCSS", "TypeScript", "Unit Tests"],
     inProgress: true,
+    featured: true,
   },
   {
     name: "User Importer",
@@ -31,6 +32,7 @@ export const projectsData: ProjectsData[] = [
     description: "Cleans user data before importing into a database",
     link: "https://github.com/griebenowschalk/user-importer",
     tags: ["ReactJS", "TailwindCSS", "TypeScript", "Vite", "Unit Tests"],
+    featured: true,
   },
   {
     name: "My Todo App",
@@ -55,6 +57,7 @@ export const projectsData: ProjectsData[] = [
     description: "API for a bootcamp application",
     link: "https://github.com/griebenowschalk/bootcamp-api",
     tags: ["Node.js", "Express", "TypeScript", "MongoDB"],
+    featured: true,
   },
   {
     name: "Business Feed",

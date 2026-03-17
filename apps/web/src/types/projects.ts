@@ -6,4 +6,5 @@ export interface ProjectsData {
   tags: string[];
   index?: number;
   inProgress?: boolean;
+  featured?: boolean;
 }

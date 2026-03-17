@@ -1,0 +1,42 @@
+name: MongoDB Keep-Alive
+
+# Ping the deployed API every 3 days so MongoDB Atlas (free tier) never goes inactive.
+# Atlas pauses clusters after 60 days without any DB activity; the API's built-in
+# 24-hour scheduler covers day-to-day, but this workflow is a belt-and-suspenders
+# guard for when the API container itself sleeps (Render/Railway free tier).
+#
+# The workflow hits public read endpoints (no auth needed) so MongoDB gets real queries.
+
+on:
+  schedule:
+    # Every 3 days at 08:00 UTC (cron: minute hour day month weekday)
+    - cron: "0 8 */3 * *"
+  workflow_dispatch: # also allow manual trigger from GitHub UI
+
+jobs:
+  ping:
+    name: Ping API & warm MongoDB
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Ping health endpoint
+        run: |
+          echo "Pinging ${{ vars.API_URL }}/health ..."
+          curl --fail --silent --show-error --max-time 30 \
+            "${{ vars.API_URL }}/health" | jq .
+
+      - name: Warm projects collection
+        run: |
+          curl --fail --silent --show-error --max-time 30 \
+            "${{ vars.API_URL }}/api/v1/projects?limit=1" | jq '.success'
+
+      - name: Warm skills collection
+        run: |
+          curl --fail --silent --show-error --max-time 30 \
+            "${{ vars.API_URL }}/api/v1/skills?limit=1" | jq '.success'
+
+      - name: Warm experience collection
+        run: |
+          curl --fail --silent --show-error --max-time 30 \
+            "${{ vars.API_URL }}/api/v1/experience?limit=1" | jq '.success'

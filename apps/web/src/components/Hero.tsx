@@ -139,7 +139,7 @@ const Hero = () => {
             onMouseEnter={() => setButtonHover(true)}
             onMouseLeave={() => setButtonHover(false)}
           >
-            {"Talk to me"}
+            {"Say Hi!"}
           </Button>
         </motion.div>
       </div>

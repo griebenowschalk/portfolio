@@ -32,12 +32,13 @@ const Projects = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
-  const filteredProjects =
+  const filteredProjects = (
     index === 0
       ? (projectsData ?? [])
       : (projectsData ?? []).filter((p) =>
           p.tags.includes(projectsButtons[index]),
-        );
+        )
+  ).sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
 
   return (
     <Container id="projects" className="items-start justify-start gap-y-0">

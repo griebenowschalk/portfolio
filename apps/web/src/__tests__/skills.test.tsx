@@ -1,15 +1,21 @@
 import { render, screen, within } from "@testing-library/react";
 import Skills, { skillsVariants } from "@/components/Skills";
 import { skills } from "@/data/skills";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
+
+const mockUseSkills = vi.fn();
 
 vi.mock("@/hooks/useSkills", () => ({
-  useSkills: () => ({
+  useSkills: () => mockUseSkills(),
+}));
+
+beforeEach(() => {
+  mockUseSkills.mockReturnValue({
     skills,
     isLoading: false,
     isError: false,
-  }),
-}));
+  });
+});
 
 describe("Skills", () => {
   it("data integrity test", () => {
@@ -43,5 +49,31 @@ describe("Skills", () => {
     expect(v0.transition?.delay).toBeCloseTo(0.3);
     expect(v3.transition?.delay).toBeCloseTo(0.3 + 3 * 0.07);
     expect(skillsVariants.hidden).toEqual({ opacity: 0, y: 30 });
+  });
+
+  it("shows loading state while fetching", () => {
+    mockUseSkills.mockReturnValueOnce({
+      skills: [],
+      isLoading: true,
+      isError: false,
+    });
+    render(<Skills />);
+    expect(screen.getByText(/loading skills/i)).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("skills-container")).queryAllByRole("img"),
+    ).toHaveLength(0);
+  });
+
+  it("shows error message when API fails", () => {
+    mockUseSkills.mockReturnValueOnce({
+      skills: [],
+      isLoading: false,
+      isError: true,
+    });
+    render(<Skills />);
+    expect(screen.getByText(/unable to load skills/i)).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("skills-container")).queryAllByRole("img"),
+    ).toHaveLength(0);
   });
 });
