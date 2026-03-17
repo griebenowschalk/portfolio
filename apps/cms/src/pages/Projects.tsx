@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Layout from "../components/layout/Layout";
 import EntityForm from "../components/common/EntityForm";
 import EntityList from "../components/common/EntityList";
@@ -6,8 +6,10 @@ import { useEntity } from "../hooks/useEntity";
 import { projectsConfig } from "../config/entities/projects.config";
 import { Plus } from "lucide-react";
 import type { ApiProject } from "@portfolio/shared";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
 
-const Projects = () => {
+const Projects: React.FC = () => {
   const { entities, isLoading, isError, mutate } =
     useEntity<ApiProject>(projectsConfig);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -38,31 +40,29 @@ const Projects = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Projects
-            </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
+            <h1 className="text-4xl font-bold tracking-tight">Projects</h1>
+            <p className="mt-2 text-muted-foreground">
               Manage your portfolio projects
             </p>
           </div>
-          <button onClick={handleCreate} className="btn btn-primary">
-            <Plus className="w-5 h-5 mr-2" />
+          <Button onClick={handleCreate}>
+            <Plus className="mr-2 h-4 w-4" />
             New Project
-          </button>
+          </Button>
         </div>
 
         {isLoading ? (
-          <div className="card">
-            <p className="text-center text-gray-600 dark:text-gray-400">
+          <Card>
+            <CardContent className="py-6 text-center text-muted-foreground">
               Loading projects...
-            </p>
-          </div>
+            </CardContent>
+          </Card>
         ) : isError ? (
-          <div className="card">
-            <p className="text-center text-red-600">
+          <Card>
+            <CardContent className="py-6 text-center text-destructive">
               Failed to load projects. Please try again.
-            </p>
-          </div>
+            </CardContent>
+          </Card>
         ) : (
           <EntityList
             config={projectsConfig}

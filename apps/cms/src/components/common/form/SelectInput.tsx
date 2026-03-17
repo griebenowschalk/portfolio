@@ -1,4 +1,12 @@
 import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
+import { Label } from "../../ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../ui/select";
 
 interface SelectInputProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
@@ -8,6 +16,7 @@ interface SelectInputProps<TFieldValues extends FieldValues> {
   error?: string;
   helperText?: string;
   register: UseFormRegister<TFieldValues>;
+  value?: string;
 }
 
 function SelectInput<TFieldValues extends FieldValues>({
@@ -18,25 +27,43 @@ function SelectInput<TFieldValues extends FieldValues>({
   error,
   helperText,
   register,
+  value,
 }: SelectInputProps<TFieldValues>) {
+  const { onChange, onBlur, ref } = register(name);
+
   return (
-    <div>
-      <label className="label">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      <select
-        {...register(name)}
-        className={`input ${error ? "border-red-500" : ""}`}
+    <div className="space-y-2">
+      <Label htmlFor={name}>
+        {label}
+        {required && <span className="text-destructive ml-1">*</span>}
+      </Label>
+      <Select
+        value={value ?? ""}
+        onValueChange={(val) =>
+          onChange({
+            target: { name, value: val },
+          } as unknown as React.ChangeEvent<HTMLSelectElement>)
+        }
       >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
+        <SelectTrigger
+          id={name}
+          ref={ref}
+          onBlur={onBlur}
+          className={error ? "border-destructive" : ""}
+        >
+          <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {error && <p className="text-sm text-destructive">{error}</p>}
       {helperText && !error && (
-        <p className="text-gray-500 text-sm mt-1">{helperText}</p>
+        <p className="text-sm text-muted-foreground">{helperText}</p>
       )}
     </div>
   );

@@ -6,6 +6,8 @@ import { useEntity } from "../hooks/useEntity";
 import { experienceConfig } from "../config/entities/experience.config";
 import { Plus } from "lucide-react";
 import type { ApiExperience } from "@portfolio/shared";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
 
 const Experience: React.FC = () => {
   const { entities, isLoading, isError, mutate } =
@@ -40,31 +42,29 @@ const Experience: React.FC = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Experience
-            </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
+            <h1 className="text-4xl font-bold tracking-tight">Experience</h1>
+            <p className="mt-2 text-muted-foreground">
               Manage your work and education experience
             </p>
           </div>
-          <button onClick={handleCreate} className="btn btn-primary">
-            <Plus className="w-5 h-5 mr-2" />
+          <Button onClick={handleCreate}>
+            <Plus className="mr-2 h-4 w-4" />
             New Experience
-          </button>
+          </Button>
         </div>
 
         {isLoading ? (
-          <div className="card">
-            <p className="text-center text-gray-600 dark:text-gray-400">
+          <Card>
+            <CardContent className="py-6 text-center text-muted-foreground">
               Loading experience...
-            </p>
-          </div>
+            </CardContent>
+          </Card>
         ) : isError ? (
-          <div className="card">
-            <p className="text-center text-red-600">
+          <Card>
+            <CardContent className="py-6 text-center text-destructive">
               Failed to load experience. Please try again.
-            </p>
-          </div>
+            </CardContent>
+          </Card>
         ) : (
           <EntityList
             config={experienceConfig}

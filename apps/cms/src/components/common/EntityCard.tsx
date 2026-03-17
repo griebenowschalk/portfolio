@@ -1,5 +1,16 @@
 import { Edit, Trash2 } from "lucide-react";
 import type { EntityConfig } from "../../config/types";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { cn } from "../../lib/utils";
 
 interface EntityCardProps<T> {
   config: EntityConfig<T>;
@@ -8,15 +19,16 @@ interface EntityCardProps<T> {
   onDelete: (entity: T) => void;
 }
 
-const TAG_COLORS: Record<string, string> = {
-  blue: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-  green: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+const TAG_COLOR_MAP: Record<string, string> = {
+  blue: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20",
+  green:
+    "bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/20",
   yellow:
-    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-  red: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+    "bg-yellow-500/10 text-yellow-700 dark:text-yellow-300 border-yellow-500/20",
+  red: "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/20",
   purple:
-    "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
-  gray: "bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200",
+    "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20",
+  gray: "bg-gray-500/10 text-gray-700 dark:text-gray-300 border-gray-500/20",
 };
 
 function EntityCard<T>({
@@ -42,61 +54,88 @@ function EntityCard<T>({
   };
 
   return (
-    <div className="card group">
+    <Card className="group overflow-hidden transition-all hover:shadow-lg">
+      {/* Image */}
       {image && (
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-48 object-cover rounded-lg mb-4"
-        />
+        <div className="relative aspect-video overflow-hidden border-b">
+          <img
+            src={image}
+            alt={title}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+        </div>
       )}
 
-      <div className="flex-1">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-          {title}
-        </h3>
+      <CardHeader className="space-y-2">
+        <div className="flex items-start justify-between gap-2">
+          <CardTitle className="line-clamp-1">{title}</CardTitle>
+          {tags.length > 0 && tags[0] && (
+            <Badge
+              variant="outline"
+              className={cn(
+                "shrink-0",
+                TAG_COLOR_MAP[tags[0].color] || TAG_COLOR_MAP.gray,
+              )}
+            >
+              {tags[0].label}
+            </Badge>
+          )}
+        </div>
 
         {subtitle && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-            {subtitle}
-          </p>
+          <CardDescription className="line-clamp-1">{subtitle}</CardDescription>
         )}
+      </CardHeader>
 
-        {description && (
-          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
+      {description && (
+        <CardContent>
+          <p className="text-sm text-muted-foreground line-clamp-2">
             {description}
           </p>
-        )}
+        </CardContent>
+      )}
 
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {tags.map((tag, index) => (
-              <span
+      {/* Tags */}
+      {tags.length > 1 && (
+        <CardContent className="pt-0">
+          <div className="flex flex-wrap gap-1.5">
+            {tags.slice(1).map((tag, index) => (
+              <Badge
                 key={index}
-                className={`px-2 py-1 text-xs rounded ${
-                  TAG_COLORS[tag.color] || TAG_COLORS.gray
-                }`}
+                variant="outline"
+                className={cn(
+                  "text-xs",
+                  TAG_COLOR_MAP[tag.color] || TAG_COLOR_MAP.gray,
+                )}
               >
                 {tag.label}
-              </span>
+              </Badge>
             ))}
           </div>
-        )}
-      </div>
+        </CardContent>
+      )}
 
-      <div className="flex gap-2 mt-4">
-        <button
+      <CardFooter className="gap-2 border-t pt-4">
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => onEdit(entity)}
-          className="btn btn-secondary flex-1"
+          className="flex-1"
         >
-          <Edit className="w-4 h-4 mr-2" />
+          <Edit className="mr-2 h-4 w-4" />
           Edit
-        </button>
-        <button onClick={handleDelete} className="btn btn-danger">
-          <Trash2 className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleDelete}
+          className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
 

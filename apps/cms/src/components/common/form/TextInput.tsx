@@ -1,4 +1,6 @@
 import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
 
 interface TextInputProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
@@ -22,20 +24,21 @@ function TextInput<TFieldValues extends FieldValues>({
   register,
 }: TextInputProps<TFieldValues>) {
   return (
-    <div>
-      <label className="label">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      <input
+    <div className="space-y-2">
+      <Label htmlFor={name}>
+        {label}
+        {required && <span className="text-destructive ml-1">*</span>}
+      </Label>
+      <Input
+        id={name}
         {...register(name)}
-        type="text"
-        className={`input ${error ? "border-red-500" : ""}`}
         placeholder={placeholder}
         maxLength={maxLength}
+        className={error ? "border-destructive" : ""}
       />
-      {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
       {helperText && !error && (
-        <p className="text-gray-500 text-sm mt-1">{helperText}</p>
+        <p className="text-sm text-muted-foreground">{helperText}</p>
       )}
     </div>
   );

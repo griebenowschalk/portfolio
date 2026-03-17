@@ -1,10 +1,13 @@
 import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
+import { Checkbox } from "../../ui/checkbox";
+import { Label } from "../../ui/label";
 
 interface CheckboxInputProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
   label: string;
   error?: string;
   register: UseFormRegister<TFieldValues>;
+  checked?: boolean;
 }
 
 function CheckboxInput<TFieldValues extends FieldValues>({
@@ -12,16 +15,29 @@ function CheckboxInput<TFieldValues extends FieldValues>({
   label,
   error,
   register,
+  checked,
 }: CheckboxInputProps<TFieldValues>) {
+  const { onChange, onBlur, ref } = register(name);
+
   return (
-    <div>
-      <div className="flex items-center">
-        <input {...register(name)} type="checkbox" className="mr-2 w-4 h-4" />
-        <label className="text-sm text-gray-700 dark:text-gray-300">
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <Checkbox
+          id={name}
+          ref={ref}
+          checked={checked ?? false}
+          onBlur={onBlur}
+          onCheckedChange={(val) =>
+            onChange({
+              target: { name, value: val },
+            } as unknown as React.ChangeEvent<HTMLInputElement>)
+          }
+        />
+        <Label htmlFor={name} className="font-normal cursor-pointer">
           {label}
-        </label>
+        </Label>
       </div>
-      {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );
 }

@@ -1,4 +1,7 @@
 import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
+import { Label } from "../../ui/label";
+import { Textarea } from "../../ui/textarea";
+import { cn } from "../../../lib/utils";
 
 interface TextAreaProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
@@ -24,20 +27,22 @@ function TextArea<TFieldValues extends FieldValues>({
   register,
 }: TextAreaProps<TFieldValues>) {
   return (
-    <div>
-      <label className="label">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      <textarea
+    <div className="space-y-2">
+      <Label htmlFor={name}>
+        {label}
+        {required && <span className="text-destructive ml-1">*</span>}
+      </Label>
+      <Textarea
+        id={name}
         {...register(name)}
-        className={`input ${error ? "border-red-500" : ""}`}
         placeholder={placeholder}
         rows={rows}
         maxLength={maxLength}
+        className={cn(error ? "border-destructive" : "")}
       />
-      {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
       {helperText && !error && (
-        <p className="text-gray-500 text-sm mt-1">{helperText}</p>
+        <p className="text-sm text-muted-foreground">{helperText}</p>
       )}
     </div>
   );

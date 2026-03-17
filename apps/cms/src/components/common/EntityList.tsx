@@ -2,7 +2,6 @@ import type { EntityConfig } from "../../config/types";
 import EntityCard from "./EntityCard";
 import toast from "react-hot-toast";
 import apiClient from "../../lib/api-client";
-
 interface EntityListProps<T> {
   config: EntityConfig<T>;
   entities: T[];
@@ -39,8 +38,8 @@ function EntityList<T>({
 
   if (entities.length === 0) {
     return (
-      <div className="card text-center">
-        <p className="text-gray-600 dark:text-gray-400">
+      <div className="rounded-xl border bg-card p-8 text-center">
+        <p className="text-muted-foreground">
           No {config.pluralName} yet. Create your first one!
         </p>
       </div>

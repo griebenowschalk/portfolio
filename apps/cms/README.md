@@ -2,6 +2,36 @@
 
 Admin UI for managing portfolio content: projects, skills, and experience. Uses the portfolio API for data and JWT auth.
 
+## Screenshots
+
+> Screenshots taken from local development build. The CMS uses a dark/light theme toggle that persists across sessions.
+
+### Login
+
+![CMS Login screen](docs/screenshots/login.png)
+
+### Dashboard
+
+![Dashboard with content statistics and recent projects](docs/screenshots/dashboard.png)
+
+### Projects
+
+![Projects list with edit and delete actions](docs/screenshots/projects.png)
+
+### Skills
+
+![Skills list with proficiency and category badges](docs/screenshots/skills.png)
+
+### Experience
+
+![Experience timeline entries with edit actions](docs/screenshots/experience.png)
+
+### Edit form (with image management)
+
+![Edit dialog showing current image preview with remove option](docs/screenshots/edit-form.png)
+
+---
+
 ## Development
 
 ### Run with other apps (local testing)
@@ -70,9 +100,9 @@ Output is in `apps/cms/dist`. Serve with any static host (Vercel, Netlify, S3 + 
 
 Set at **build time** (Vite inlines `import.meta.env`):
 
-| Variable         | Description                    | Example                    |
-|------------------|--------------------------------|----------------------------|
-| `VITE_API_URL`   | Base URL of the portfolio API | `https://api.example.com`  |
+| Variable       | Description                   | Example                   |
+| -------------- | ----------------------------- | ------------------------- |
+| `VITE_API_URL` | Base URL of the portfolio API | `https://api.example.com` |
 
 No trailing slash. Example for a deploy:
 

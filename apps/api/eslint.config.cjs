@@ -3,13 +3,8 @@
 const tseslint = require("typescript-eslint");
 
 module.exports = tseslint.config(
+  { ignores: ["apps/api/eslint.config.cjs", "eslint.config.cjs"] },
   ...tseslint.configs.recommended,
-  {
-    files: ["apps/api/eslint.config.cjs"],
-    rules: {
-      "@typescript-eslint/no-require-imports": "off",
-    },
-  },
   {
     files: ["apps/api/src/**/*.ts"],
     languageOptions: {

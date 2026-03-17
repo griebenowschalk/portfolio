@@ -3,11 +3,13 @@ import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { X } from "lucide-react";
 import toast from "react-hot-toast";
 import type { EntityConfig } from "../../config/types";
 import FormField from "./form/FormField";
 import apiClient from "../../lib/api-client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
 
 interface EntityFormProps<T> {
   config: EntityConfig<T>;
@@ -39,6 +41,7 @@ function EntityForm<T>({
 }: EntityFormProps<T>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fileFields, setFileFields] = useState<Record<string, File[]>>({});
+  const [removedFields, setRemovedFields] = useState<Set<string>>(new Set());
 
   const { schema, defaultValues } = useMemo(() => {
     const schemaShape: Record<string, z.ZodTypeAny> = {};
@@ -48,7 +51,15 @@ function EntityForm<T>({
       schemaShape[key] = field.validation || z.unknown().optional();
 
       if (entity) {
-        const value = getNestedValue(entity, key);
+        let value = getNestedValue(entity, key);
+        // <input type="date"> requires YYYY-MM-DD; API returns full ISO strings
+        if (field.type === "date" && value) {
+          try {
+            value = new Date(value as string).toISOString().split("T")[0];
+          } catch {
+            // leave as-is
+          }
+        }
         values[key] = value !== undefined ? value : field.defaultValue;
       } else {
         values[key] = field.defaultValue;
@@ -119,6 +130,14 @@ function EntityForm<T>({
         formData.append(key, JSON.stringify(value));
       });
 
+      // Signal image removals (only when no replacement file was uploaded)
+      removedFields.forEach((fieldName) => {
+        const hasReplacement = (fileFields[fieldName] || []).length > 0;
+        if (!hasReplacement) {
+          formData.append(`remove_${fieldName}`, "true");
+        }
+      });
+
       const idField = config.idField || "_id";
       const entityId = entity ? (entity as any)[idField] : undefined;
 
@@ -162,22 +181,30 @@ function EntityForm<T>({
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {entity ? `Edit ${config.name}` : `New ${config.name}`}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
+  const handleRemoveCurrent = (fieldName: string) => {
+    setRemovedFields((prev) => {
+      const next = new Set(prev);
+      if (next.has(fieldName)) {
+        next.delete(fieldName); // undo
+      } else {
+        next.add(fieldName);
+      }
+      return next;
+    });
+  };
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>
+            {entity ? `Edit ${config.name}` : `New ${config.name}`}
+          </DialogTitle>
+        </DialogHeader>
+
+        <Separator />
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {Object.entries(config.fields).map(([fieldName, fieldConfig]) => (
             <FormField
               key={fieldName}
@@ -187,29 +214,33 @@ function EntityForm<T>({
               errors={errors}
               value={formValues[fieldName as keyof FormData]}
               onChange={(value) => handleControlledChange(fieldName, value)}
+              onRemoveCurrent={
+                fieldConfig.type === "file"
+                  ? () => handleRemoveCurrent(fieldName)
+                  : undefined
+              }
             />
           ))}
 
-          <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <button
+          <Separator />
+
+          <div className="flex gap-2 pt-2">
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="btn btn-secondary flex-1"
               disabled={isSubmitting}
+              className="flex-1"
             >
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary flex-1"
-              disabled={isSubmitting}
-            >
+            </Button>
+            <Button type="submit" disabled={isSubmitting} className="flex-1">
               {isSubmitting ? "Saving..." : "Save"}
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

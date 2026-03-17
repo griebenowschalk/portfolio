@@ -8,6 +8,20 @@ import DateInput from "./DateInput";
 import NumberInput from "./NumberInput";
 import TagsInput from "./TagsInput";
 
+/** Extract the image URL from whatever the API stores (single object or array). */
+function extractCurrentImageUrl(value: unknown): string | undefined {
+  if (!value) return undefined;
+  if (typeof value === "object" && !Array.isArray(value)) {
+    const obj = value as Record<string, unknown>;
+    if (typeof obj.url === "string") return obj.url;
+  }
+  if (Array.isArray(value) && value.length > 0) {
+    const first = value[0] as Record<string, unknown>;
+    if (typeof first?.url === "string") return first.url;
+  }
+  return undefined;
+}
+
 function FormField({
   name,
   config,
@@ -15,6 +29,7 @@ function FormField({
   errors,
   value,
   onChange,
+  onRemoveCurrent,
 }: FormFieldProps) {
   const error = errors[name]?.message as string | undefined;
 
@@ -58,11 +73,18 @@ function FormField({
           {...baseProps}
           options={config.options}
           register={register}
+          value={typeof value === "string" ? value : String(value ?? "")}
         />
       );
 
     case "checkbox":
-      return <CheckboxInput {...baseProps} register={register} />;
+      return (
+        <CheckboxInput
+          {...baseProps}
+          register={register}
+          checked={typeof value === "boolean" ? value : value === "true"}
+        />
+      );
 
     case "file":
       return (
@@ -72,6 +94,8 @@ function FormField({
           multiple={config.multiple}
           maxFiles={config.maxFiles}
           onChange={onChange as (files: File[]) => void}
+          currentImageUrl={extractCurrentImageUrl(value)}
+          onRemoveCurrent={onRemoveCurrent}
         />
       );
 

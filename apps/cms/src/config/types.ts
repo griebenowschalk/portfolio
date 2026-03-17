@@ -122,4 +122,5 @@ export interface FormFieldProps {
   errors: FieldErrors<FieldValues>;
   value?: unknown;
   onChange?: (value: unknown) => void;
+  onRemoveCurrent?: () => void;
 }
