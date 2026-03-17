@@ -2,7 +2,6 @@ import useSWR from "swr";
 import { fetchSkills } from "@/lib/api";
 import { mapApiSkillToSkill } from "@/lib/mappers";
 import type { SkillsData } from "@/types/skills";
-import { skills as staticSkills } from "@/data/skills";
 
 const SKILLS_KEY = "skills";
 
@@ -22,8 +21,7 @@ export function useSkills() {
     },
   );
   return {
-    // Fall back to static data when API errors so the portfolio is never blank
-    skills: data ?? (error ? staticSkills : []),
+    skills: data ?? [],
     isLoading: isLoading && !error,
     isError: !!error,
     error,
