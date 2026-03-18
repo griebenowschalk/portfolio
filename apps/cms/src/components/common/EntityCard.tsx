@@ -54,7 +54,7 @@ function EntityCard<T>({
   };
 
   return (
-    <Card className="group overflow-hidden transition-all hover:shadow-lg">
+    <Card className="group flex h-full flex-col overflow-hidden transition-all hover:shadow-lg">
       {/* Image */}
       {image && (
         <div className="relative aspect-video overflow-hidden border-b">
@@ -116,7 +116,7 @@ function EntityCard<T>({
         </CardContent>
       )}
 
-      <CardFooter className="gap-2 border-t pt-4">
+      <CardFooter className="mt-auto gap-2 border-t pt-4">
         <Button
           variant="outline"
           size="sm"

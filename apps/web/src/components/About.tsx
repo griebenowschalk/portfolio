@@ -32,7 +32,11 @@ const About = () => {
             </p>
           ))}
           <Button asChild className="w-max flex items-center gap-2 mt-6">
-            <a href="/CV.pdf" download={""}>
+            <a
+              href={process.env.NEXT_PUBLIC_CV_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <span>Download CV</span>
               <span>
                 <i className="ri-download-line"></i>
