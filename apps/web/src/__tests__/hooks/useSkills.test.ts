@@ -45,7 +45,7 @@ describe("useSkills", () => {
     expect(result.current.isError).toBe(false);
   });
 
-  it("falls back to static skills when SWR errors", () => {
+  it("returns empty array when SWR errors", () => {
     mockUseSWR.mockReturnValueOnce({
       data: undefined,
       error: new Error("Network error"),
@@ -55,7 +55,7 @@ describe("useSkills", () => {
     } as ReturnType<typeof useSWR>);
 
     const { result } = renderHook(() => useSkills());
-    expect(result.current.skills).toEqual(staticSkills);
+    expect(result.current.skills).toEqual([]);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isError).toBe(true);
   });

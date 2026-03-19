@@ -45,7 +45,7 @@ describe("useExperience", () => {
     expect(result.current.isError).toBe(false);
   });
 
-  it("falls back to static experience when SWR errors", () => {
+  it("returns empty array when SWR errors", () => {
     mockUseSWR.mockReturnValueOnce({
       data: undefined,
       error: new Error("Network error"),
@@ -55,7 +55,7 @@ describe("useExperience", () => {
     } as ReturnType<typeof useSWR>);
 
     const { result } = renderHook(() => useExperience());
-    expect(result.current.experience).toEqual(staticExperience);
+    expect(result.current.experience).toEqual([]);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isError).toBe(true);
   });

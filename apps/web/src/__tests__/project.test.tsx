@@ -98,6 +98,7 @@ describe("Project", () => {
     const projects = within(
       screen.getByTestId("projects-container"),
     ).getAllByTestId("project");
+
     for (const project of projects) {
       const overlay = within(project).getByTestId("project-overlay");
 
@@ -123,6 +124,7 @@ describe("Project", () => {
       isLoading: true,
       isError: false,
     });
+
     render(<Projects />);
     expect(screen.getByText(/loading projects/i)).toBeInTheDocument();
     expect(
@@ -136,24 +138,24 @@ describe("Project", () => {
       isLoading: false,
       isError: true,
     });
+
     render(<Projects />);
     expect(screen.getByText(/unable to load projects/i)).toBeInTheDocument();
   });
 
-  it("renders fallback static data when API fails with data present", () => {
+  it("shows error message even if projects exist but isError is true", () => {
     mockUseProjects.mockReturnValueOnce({
       projects: projectsData,
       isLoading: false,
       isError: true,
     });
+
     render(<Projects />);
-    // Fallback data is shown — no error message, projects visible
-    expect(
-      screen.queryByText(/unable to load projects/i),
-    ).not.toBeInTheDocument();
-    const imgs = within(screen.getByTestId("projects-container")).getAllByRole(
-      "img",
-    );
-    expect(imgs.length).toBe(projectsData.length);
+
+    expect(screen.getByText(/unable to load projects/i)).toBeInTheDocument();
+    const imgs = within(
+      screen.getByTestId("projects-container"),
+    ).queryAllByRole("img");
+    expect(imgs).toHaveLength(0);
   });
 });
