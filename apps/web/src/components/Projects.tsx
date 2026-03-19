@@ -4,9 +4,8 @@ import Container from "./common/Container";
 import Heading from "./common/Heading";
 import { Button } from "./ui/button";
 import Project from "./common/Project";
-import { projectsButtons } from "@/data/projects";
 import { useProjects } from "@/hooks/useProjects";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { animate, motion } from "framer-motion";
 
 const Projects = () => {
@@ -15,15 +14,39 @@ const Projects = () => {
   const prevIndex = useRef(0);
   const buttonsRef = useRef<HTMLButtonElement[]>([]);
 
+  const filterButtons = useMemo(() => {
+    const tags = new Set<string>();
+    for (const p of projectsData ?? []) {
+      for (const t of p.tags ?? []) tags.add(t);
+    }
+
+    // Deterministic order for stable UI + tests.
+    return ["All", ...Array.from(tags).sort()];
+  }, [projectsData]);
+
+  // Keep selection valid when available technologies change.
+  useEffect(() => {
+    setIndex(0);
+    prevIndex.current = 0;
+  }, [filterButtons.join("|")]);
+
   const handleButtonClick = () => {
-    animate(buttonsRef.current[prevIndex.current], {
-      opacity: 0.5,
-      scale: 1,
-    });
-    animate(buttonsRef.current[index], {
-      opacity: 1,
-      scale: 1.2,
-    });
+    const prevEl = buttonsRef.current[prevIndex.current];
+    const nextEl = buttonsRef.current[index];
+
+    if (prevEl) {
+      animate(prevEl, {
+        opacity: 0.5,
+        scale: 1,
+      });
+    }
+
+    if (nextEl) {
+      animate(nextEl, {
+        opacity: 1,
+        scale: 1.2,
+      });
+    }
   };
 
   useEffect(() => {
@@ -32,19 +55,18 @@ const Projects = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
+  const selectedTag = filterButtons[index] ?? "All";
   const filteredProjects = (
     index === 0
       ? (projectsData ?? [])
-      : (projectsData ?? []).filter((p) =>
-          p.tags.includes(projectsButtons[index]),
-        )
+      : (projectsData ?? []).filter((p) => p.tags.includes(selectedTag))
   ).sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
 
   return (
     <Container id="projects" className="items-start justify-start gap-y-0">
       <Heading title="Projects" />
       <div className="flex flex-wrap items-center justify-start gap-4 py-10">
-        {projectsButtons.map((button, i) => (
+        {filterButtons.map((button, i) => (
           <motion.div key={i}>
             <Button
               ref={(el) => {
@@ -53,7 +75,7 @@ const Projects = () => {
                 }
               }}
               variant="outline"
-              className={`font-medium tracking-wider ${index === i ? "bg-input dark:bg-input text-card-foreground" : ""}`}
+              className={`font-medium cursor-pointer tracking-wider ${index === i ? "bg-input dark:bg-input text-card-foreground" : ""}`}
               onClick={() => setIndex(i)}
             >
               {button}

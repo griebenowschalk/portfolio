@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Layout from "../components/layout/Layout";
 import EntityForm from "../components/common/EntityForm";
 import EntityList from "../components/common/EntityList";
@@ -14,6 +14,27 @@ const Projects: React.FC = () => {
     useEntity<ApiProject>(projectsConfig);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingEntity, setEditingEntity] = useState<ApiProject | null>(null);
+
+  const technologySuggestions = useMemo(() => {
+    const set = new Set<string>();
+    for (const p of entities) {
+      for (const t of p.technologies ?? []) set.add(t);
+    }
+    return Array.from(set).sort();
+  }, [entities]);
+
+  const projectsConfigWithTechSuggestions = useMemo(() => {
+    return {
+      ...projectsConfig,
+      fields: {
+        ...projectsConfig.fields,
+        technologies: {
+          ...projectsConfig.fields.technologies,
+          suggestions: technologySuggestions,
+        },
+      },
+    };
+  }, [technologySuggestions]);
 
   const handleCreate = () => {
     setEditingEntity(null);
@@ -74,7 +95,7 @@ const Projects: React.FC = () => {
 
         {isFormOpen && (
           <EntityForm
-            config={projectsConfig}
+            config={projectsConfigWithTechSuggestions}
             entity={editingEntity}
             onClose={handleClose}
             onSuccess={handleSuccess}

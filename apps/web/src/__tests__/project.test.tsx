@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import Projects from "@/components/Projects";
-import { projectsButtons, projectsData } from "@/data/projects";
+import { projectsData } from "@/data/projects";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
 const mockUseProjects = vi.fn();
@@ -29,9 +29,13 @@ describe("Project", () => {
       expect(Array.isArray(project.tags)).toBe(true);
     }
 
-    const allowedTags = new Set(projectsButtons.filter((tag) => tag !== "All"));
+    // With dynamic filters, the allowed set is whatever tags exist in the data itself.
+    // This test mostly guards against accidental typos / malformed tag arrays.
+    const allowedTags = new Set(projectsData.flatMap((p) => p.tags));
     for (const project of projectsData) {
       for (const tag of project.tags) {
+        expect(typeof tag).toBe("string");
+        expect(tag.length).toBeGreaterThan(0);
         expect(allowedTags.has(tag)).toBe(true);
       }
     }
@@ -41,8 +45,12 @@ describe("Project", () => {
   });
 
   it("renders project buttons", () => {
+    const expectedTags = [
+      "All",
+      ...Array.from(new Set(projectsData.flatMap((p) => p.tags))).sort(),
+    ];
     render(<Projects />);
-    for (const tag of projectsButtons) {
+    for (const tag of expectedTags) {
       expect(screen.getByRole("button", { name: tag })).toBeInTheDocument();
     }
   });
@@ -56,13 +64,17 @@ describe("Project", () => {
   });
 
   it("shows correct project count for each filter", () => {
+    const expectedTags = [
+      "All",
+      ...Array.from(new Set(projectsData.flatMap((p) => p.tags))).sort(),
+    ];
     const getExpectedCountFor = (tag: string) =>
       tag === "All"
         ? projectsData.length
         : projectsData.filter((p) => p.tags.includes(tag)).length;
 
     render(<Projects />);
-    for (const tag of projectsButtons) {
+    for (const tag of expectedTags) {
       fireEvent.click(screen.getByRole("button", { name: tag }));
       const imgs = within(
         screen.getByTestId("projects-container"),

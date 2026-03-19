@@ -37,7 +37,8 @@ function normalizeTagsValue(value: unknown): string[] {
   // The CMS persists tag arrays as JSON strings in multipart requests.
   // If some existing DB rows got "double-encoded", we may receive:
   //   ['["Next.js","TailwindCSS"]']
-  // Normalize into a flat string[].
+  // or even JSON-stringified strings of JSON arrays.
+  // Normalize into a flat string[] of tag labels.
   const result: string[] = [];
 
   const pushUnique = (tag: string) => {
@@ -46,26 +47,43 @@ function normalizeTagsValue(value: unknown): string[] {
     if (!result.includes(cleaned)) result.push(cleaned);
   };
 
-  const tryParseJsonArray = (raw: string): string[] | null => {
+  const normalizeFromRaw = (raw: string, depth: number): void => {
     const trimmed = raw.trim();
-    if (!(trimmed.startsWith("[") && trimmed.endsWith("]"))) return null;
-    try {
-      const parsed = JSON.parse(trimmed);
-      return Array.isArray(parsed)
-        ? parsed.filter((x) => typeof x === "string")
-        : null;
-    } catch {
-      return null;
+
+    // Case A: raw is JSON array like ["Next.js","React"]
+    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          parsed.forEach((x) => {
+            if (typeof x === "string") pushUnique(x);
+          });
+          return;
+        }
+      } catch {
+        // fallthrough
+      }
     }
+
+    // Case B: double-encoded: JSON.parse('"[\"a\",\"b\"]"') => "[\"a\",\"b\"]"
+    if (depth < 3) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (typeof parsed === "string") {
+          normalizeFromRaw(parsed, depth + 1);
+          return;
+        }
+      } catch {
+        // fallthrough
+      }
+    }
+
+    // Case C: plain string tag
+    pushUnique(trimmed);
   };
 
   if (typeof value === "string") {
-    const parsed = tryParseJsonArray(value);
-    if (parsed) {
-      parsed.forEach(pushUnique);
-      return result;
-    }
-    pushUnique(value);
+    normalizeFromRaw(value, 0);
     return result;
   }
 
@@ -73,12 +91,7 @@ function normalizeTagsValue(value: unknown): string[] {
 
   for (const item of value) {
     if (typeof item !== "string") continue;
-    const parsed = tryParseJsonArray(item);
-    if (parsed) {
-      parsed.forEach(pushUnique);
-    } else {
-      pushUnique(item);
-    }
+    normalizeFromRaw(item, 0);
   }
 
   return result;

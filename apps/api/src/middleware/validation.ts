@@ -98,7 +98,10 @@ export const loginSchema = z
 export const validate = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      schema.parse(req.body);
+      // Important: we want the *parsed* + coerced values (JSON strings -> objects,
+      // booleans coerced, etc.) to be available to the controller.
+      const parsed = schema.parse(req.body);
+      req.body = parsed;
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
