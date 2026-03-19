@@ -14,8 +14,10 @@ Reference for deploying the frontend. Env details: see `example_env.md`.
 
 ## Railway
 
-- New service from GitHub. Set **Root Directory** to `apps/web` (the full repo is still cloned; paths like `../../packages/shared` resolve).
-- Build command: `npm install && npm run build`. Install resolves `@portfolio/shared` from `file:../../packages/shared` and builds it via `prepare`. Start command: `npm run start`.
+- New service from GitHub.
+- Set **Root Directory** to the **repo root** (so workspace + shared package install works).
+- Build command: `npm run build:web`
+- Start command: `npm run start:web`
 - Add env var: `NEXT_PUBLIC_API_URL` = your deployed API URL (e.g. `https://your-api.railway.app`).
 - Optional: add a custom domain in project settings.
 
@@ -32,8 +34,10 @@ Reference for deploying the frontend. Env details: see `example_env.md`.
 
 ## Netlify
 
-- New site from Git; set base directory to `apps/web`.
-- Build command: `npm run build` (or `npx next build`). Publish directory: `.next` is not used directly—use the Next.js runtime or “Next on Netlify” plugin as per Netlify’s Next.js docs.
+- New site from Git; configure Netlify with the monorepo:
+  - **Base directory:** `.`
+  - **Package directory:** `apps/web`
+- Netlify will use `apps/web/netlify.toml` for the build (command + publish).
 - Add env var: `NEXT_PUBLIC_API_URL` = your deployed API URL.
 
 ---

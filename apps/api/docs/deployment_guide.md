@@ -17,7 +17,10 @@ Reference for deploying this API. Env details: see `example_env.md` and the `.en
 - New project from GitHub; set root directory to this API app (e.g. `apps/api`).
 - Add every required (and any optional) env var in the Variables tab. Set `NODE_ENV=production` and the correct `FRONTEND_URL`.
 - Deploy (e.g. push to the linked branch). Build and start commands are inferred or set in `railway.json` if present.
-- After the first successful deploy, run the seed once (one-off command: `npm run seed`) so the admin user and seed data exist. Same Variables as the service; ensure `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME`, and `MONGODB_URI` are set.
+- After the first successful deploy, run the seed once so the admin user and seed data exist:
+  - If your shell starts in the repo root: `npm run seed:api`
+  - If your shell starts in `apps/api`: `npm run seed`
+  - Make sure `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME`, and `MONGODB_URI` are set (and that `MONGODB_URI` includes the intended db name, not the default `test`).
 - Optional: add a Redis service and set `REDIS_URL` if the app uses it. Optional: attach a custom domain in settings.
 
 ---

@@ -20,7 +20,7 @@ apps/web/
 ├── src/
 │   ├── app/              # App Router routes, layout, page
 │   ├── components/       # UI components (Projects, Skills, Experience, etc.)
-│   ├── data/            # Static data (navbar, filter labels, fallback/legacy)
+│   ├── data/            # Static data (navbar, filter labels, about, questions)
 │   ├── hooks/           # useProjects, useSkills, useExperience (SWR)
 │   ├── lib/             # api-client, api fetchers, mappers, api-types
 │   ├── types/           # Frontend types (ProjectsData, SkillsData, ExperienceData)

@@ -254,24 +254,19 @@ If your Railway UI does not expose a "Run one-off command" option, create a temp
 
 ## Deploy Web to Netlify
 
-The web app has its own `netlify.toml` in `apps/web/netlify.toml`. Netlify will read it when the **base directory** is `apps/web`:
+The web app has its own `netlify.toml` in `apps/web/netlify.toml`:
 
 ```toml
 [build]
-  # This file lives in apps/web, but we want Netlify to run
-  # npm install/build from the monorepo root.
-  base = ".."
   command = "npm run build:web"
   publish = "apps/web/.next"
-
-[build.environment]
-  NPM_FLAGS = "--ignore-scripts"
 ```
 
-Netlify UI settings for the web site:
+Netlify UI settings for the web site (monorepo aware):
 
-- **Base directory:** `apps/web`
-- **Build command:** leave blank or `npm run build:web` (the toml already sets it)
+- **Base directory:** `.` (repo root)
+- **Package directory:** `./apps/web`
+- **Build command:** `npm run build:web` (or leave empty if Netlify picks it up from `netlify.toml`)
 - **Publish directory:** `apps/web/.next`
 - **Framework preset:** Next.js
 

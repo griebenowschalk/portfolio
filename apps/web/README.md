@@ -58,6 +58,7 @@ Frontend: http://localhost:3000. Run the API (e.g. `npm run dev:api` from root) 
 
 - **Local:** `.env.development` or `.env.local` with `NEXT_PUBLIC_API_URL=http://localhost:5002`.
 - **Production:** Set `NEXT_PUBLIC_API_URL` in the host (Vercel, Netlify, etc.). Do not commit env files.
+- **CV download:** Set `NEXT_PUBLIC_CV_URL` in production (S3/CloudFront URL to your `CV.pdf`).
 
 See **`docs/example_env.md`** for the full list.
 
