@@ -36,12 +36,8 @@ jobs:
       - name: Upload coverage reports
         if: success()
         uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           files: ./apps/web/coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
           verbose: true
+          fail_ci_if_error: true
         continue-on-error: true

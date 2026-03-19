@@ -188,7 +188,12 @@ function EntityForm<T>({
           if (!nestedObjects[parent]) {
             nestedObjects[parent] = {};
           }
-          const value = getNestedValue(data, key);
+          // Depending on how react-hook-form + zodResolver shape the form data,
+          // values may be present either as nested objects (`data.links.github`)
+          // or as a literal dotted key (`data["links.github"]`).
+          const nestedValue = getNestedValue(data, key);
+          const dottedValue = (data as any)[key];
+          const value = nestedValue ?? dottedValue;
           if (value !== undefined && value !== null && value !== "") {
             nestedObjects[parent][child] = value;
           }
