@@ -33,6 +33,57 @@ function getNestedValue(obj: any, path: string): unknown {
   return value;
 }
 
+function normalizeTagsValue(value: unknown): string[] {
+  // The CMS persists tag arrays as JSON strings in multipart requests.
+  // If some existing DB rows got "double-encoded", we may receive:
+  //   ['["Next.js","TailwindCSS"]']
+  // Normalize into a flat string[].
+  const result: string[] = [];
+
+  const pushUnique = (tag: string) => {
+    const cleaned = tag.trim();
+    if (!cleaned) return;
+    if (!result.includes(cleaned)) result.push(cleaned);
+  };
+
+  const tryParseJsonArray = (raw: string): string[] | null => {
+    const trimmed = raw.trim();
+    if (!(trimmed.startsWith("[") && trimmed.endsWith("]"))) return null;
+    try {
+      const parsed = JSON.parse(trimmed);
+      return Array.isArray(parsed)
+        ? parsed.filter((x) => typeof x === "string")
+        : null;
+    } catch {
+      return null;
+    }
+  };
+
+  if (typeof value === "string") {
+    const parsed = tryParseJsonArray(value);
+    if (parsed) {
+      parsed.forEach(pushUnique);
+      return result;
+    }
+    pushUnique(value);
+    return result;
+  }
+
+  if (!Array.isArray(value)) return result;
+
+  for (const item of value) {
+    if (typeof item !== "string") continue;
+    const parsed = tryParseJsonArray(item);
+    if (parsed) {
+      parsed.forEach(pushUnique);
+    } else {
+      pushUnique(item);
+    }
+  }
+
+  return result;
+}
+
 function EntityForm<T>({
   config,
   entity,
@@ -60,7 +111,11 @@ function EntityForm<T>({
             // leave as-is
           }
         }
-        values[key] = value !== undefined ? value : field.defaultValue;
+        if (field.type === "tags") {
+          values[key] = normalizeTagsValue(value);
+        } else {
+          values[key] = value !== undefined ? value : field.defaultValue;
+        }
       } else {
         values[key] = field.defaultValue;
       }
@@ -101,8 +156,9 @@ function EntityForm<T>({
             formData.append(fieldName, file);
           });
         } else if (field.type === "tags") {
-          if (value && Array.isArray(value)) {
-            formData.append(key, JSON.stringify(value));
+          const tags = normalizeTagsValue(value);
+          if (tags.length > 0) {
+            formData.append(key, JSON.stringify(tags));
           }
         } else if (!key.includes(".")) {
           if (value !== undefined && value !== null && value !== "") {
@@ -119,7 +175,7 @@ function EntityForm<T>({
           if (!nestedObjects[parent]) {
             nestedObjects[parent] = {};
           }
-          const value = data[key as keyof FormData];
+          const value = getNestedValue(data, key);
           if (value !== undefined && value !== null && value !== "") {
             nestedObjects[parent][child] = value;
           }

@@ -1,5 +1,13 @@
 # Portfolio monorepo
 
+[![CI](https://github.com/griebenowschalk/portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/griebenowschalk/portfolio/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/griebenowschalk/portfolio/graph/badge.svg)](https://codecov.io/gh/griebenowschalk/portfolio)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://react.dev/)
+
 Monorepo: Next.js frontend, CMS API, and shared types. Frontend reads projects, skills, and experience from the API; shared package keeps the API contract in one place.
 
 ## Structure

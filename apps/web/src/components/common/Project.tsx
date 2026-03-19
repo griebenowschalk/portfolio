@@ -41,7 +41,7 @@ const Project = ({
             : "border-accent"
       }`}
     >
-      <div className="relative w-full aspect-square overflow-hidden rounded-lg">
+      <div className="relative w-full aspect-video overflow-hidden rounded-lg">
         <Image
           src={image}
           alt={name}
