@@ -24,11 +24,16 @@ const Projects = () => {
     return ["All", ...Array.from(tags).sort()];
   }, [projectsData]);
 
+  const filterButtonsKey = useMemo(
+    () => filterButtons.join("|"),
+    [filterButtons],
+  );
+
   // Keep selection valid when available technologies change.
   useEffect(() => {
     setIndex(0);
     prevIndex.current = 0;
-  }, [filterButtons.join("|")]);
+  }, [filterButtonsKey]);
 
   const handleButtonClick = () => {
     const prevEl = buttonsRef.current[prevIndex.current];

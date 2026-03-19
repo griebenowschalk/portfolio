@@ -39,5 +39,6 @@ jobs:
         with:
           files: ./apps/web/coverage/lcov.info
           verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: grijebowschalk/portfolio
           fail_ci_if_error: true
-        continue-on-error: true
