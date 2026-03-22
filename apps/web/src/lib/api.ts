@@ -36,9 +36,13 @@ export async function fetchProjectBySlug(
 export async function fetchSkills(params?: {
   category?: string;
   isActive?: boolean;
+  limit?: number;
 }): Promise<ApiListResponse<ApiSkill>> {
   const { data } = await apiClient.get<ApiListResponse<ApiSkill>>(SKILLS_PATH, {
-    params,
+    params: {
+      ...params,
+      limit: params?.limit ?? 100,
+    },
   });
   return data;
 }
