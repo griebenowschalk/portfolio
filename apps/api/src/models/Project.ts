@@ -144,15 +144,14 @@ projectSchema.virtual('featuredImage').get(function () {
     : null;
 });
 
-// Pre-validate hook to generate slug from title
-projectSchema.pre('validate', function (next: any) {
+// Pre-validate hook to generate slug from title (Mongoose 9: no next() in pre hooks)
+projectSchema.pre('validate', function () {
   if (this.title && !this.slug) {
     this.slug = this.title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
   }
-  next();
 });
 
 // Ensure unique slug
