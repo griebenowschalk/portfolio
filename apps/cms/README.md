@@ -28,7 +28,8 @@ Admin UI for managing portfolio content: projects, skills, and experience. Uses 
 
 ### Edit form (with image management)
 
-![Edit dialog showing current image preview with remove option](docs/screenshots/edit-form.png)
+![Edit dialog showing current form state with general information](docs/screenshots/edit-form-1.png)
+![Edit dialog showing current form state with image preview with remove option](docs/screenshots/edit-form-2.png)
 
 ---
 
