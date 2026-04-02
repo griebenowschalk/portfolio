@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import Experience from '../models/Experience';
 import type { ExperienceType } from '../models/Experience';
+import s3Service from '../services/s3Service';
 import { paginate, parsePaginationQuery } from '../utils/paginate';
 
 class ExperienceController {
@@ -60,7 +61,17 @@ class ExperienceController {
    */
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const experience = await Experience.create(req.body);
+      const expData: Record<string, unknown> = { ...req.body };
+
+      // If the CMS included a logo file, upload it and store the resulting S3
+      // metadata in the document.
+      if (req.file) {
+        expData.logo = await s3Service.uploadImage(req.file, {
+          folder: 'experience',
+        });
+      }
+
+      const experience = await Experience.create(expData);
       res.status(201).json({
         success: true,
         data: experience,
@@ -78,8 +89,37 @@ class ExperienceController {
     try {
       const { id } = req.params;
       const expData: Record<string, unknown> = { ...req.body };
-      const removeLogo = expData.remove_logo === 'true';
+      const removeLogo =
+        expData.remove_logo === true || expData.remove_logo === 'true';
       delete expData.remove_logo;
+
+      if (req.file) {
+        // Replace logo: delete old one from S3 (if it exists), then upload new.
+        const existing = await Experience.findById(id).lean();
+        const existingLogoKey = (existing as any)?.logo?.key as
+          | string
+          | undefined;
+
+        if (existingLogoKey) {
+          const exists = await s3Service.fileExists(existingLogoKey);
+          if (exists) await s3Service.deleteFile(existingLogoKey);
+        }
+
+        expData.logo = await s3Service.uploadImage(req.file, {
+          folder: 'experience',
+        });
+      } else if (removeLogo) {
+        // Remove logo without replacement: delete from S3, then unset in DB.
+        const existing = await Experience.findById(id).lean();
+        const existingLogoKey = (existing as any)?.logo?.key as
+          | string
+          | undefined;
+
+        if (existingLogoKey) {
+          const exists = await s3Service.fileExists(existingLogoKey);
+          if (exists) await s3Service.deleteFile(existingLogoKey);
+        }
+      }
 
       const updateQuery = removeLogo
         ? { $set: expData, $unset: { logo: '' } }

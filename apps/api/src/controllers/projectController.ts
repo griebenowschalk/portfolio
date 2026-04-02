@@ -108,7 +108,8 @@ class ProjectController {
     try {
       const { id } = req.params;
       const updates: Record<string, unknown> = { ...req.body };
-      const removeImages = updates.remove_images === 'true';
+      const removeImages =
+        updates.remove_images === true || updates.remove_images === 'true';
       delete updates.remove_images;
 
       if (req.files && Array.isArray(req.files) && req.files.length > 0) {

@@ -91,7 +91,8 @@ class SkillController {
     try {
       const { id } = req.params;
       const skillData: Record<string, unknown> = { ...req.body };
-      const removeIcon = skillData.remove_icon === 'true';
+      const removeIcon =
+        skillData.remove_icon === true || skillData.remove_icon === 'true';
       delete skillData.remove_icon;
 
       if (req.file) {

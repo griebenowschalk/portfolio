@@ -37,6 +37,7 @@ export const projectSchema = z
       .optional(),
     technologies: jsonStringArray.optional(),
     featured: z.preprocess(coerceBool, z.boolean()).optional(),
+    remove_images: z.preprocess(coerceBool, z.boolean()).optional(),
     links: z
       .preprocess(
         parseJson,
@@ -61,6 +62,7 @@ export const skillSchema = z
     description: z.string().max(500).optional(),
     link: z.string().url().optional(),
     isActive: z.preprocess(coerceBool, z.boolean()).optional(),
+    remove_icon: z.preprocess(coerceBool, z.boolean()).optional(),
   })
   .openapi('SkillBody');
 
@@ -77,6 +79,7 @@ export const experienceSchema = z
     description: z.string().min(10),
     achievements: jsonStringArray.optional(),
     technologies: jsonStringArray.optional(),
+    remove_logo: z.preprocess(coerceBool, z.boolean()).optional(),
   })
   .openapi('ExperienceBody');
 

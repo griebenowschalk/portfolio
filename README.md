@@ -57,3 +57,4 @@ npm install
 - [apps/api/README.md](apps/api/README.md) – API quick start, env, Docker, deploy, links to api docs
 - [apps/cms/README.md](apps/cms/README.md) – CMS admin quick start, env, scripts
 - [packages/shared/README.md](packages/shared/README.md) – shared types and usage
+- [docs/IMAGE_UPLOAD_LIFECYCLE.md](docs/IMAGE_UPLOAD_LIFECYCLE.md) – full image lifecycle from CMS upload to API/S3/CloudFront to portfolio rendering

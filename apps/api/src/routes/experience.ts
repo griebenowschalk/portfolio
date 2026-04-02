@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import experienceController from '../controllers/experienceController';
 import { authenticate } from '../middleware/auth';
+import { upload } from '../middleware/upload';
 import { validateExperience } from '../middleware/validation';
 
 const router = Router();
@@ -20,12 +21,19 @@ router.get('/:id', experienceController.getById);
  */
 
 // POST /api/v1/experience
-router.post('/', authenticate, validateExperience, experienceController.create);
+router.post(
+  '/',
+  authenticate,
+  upload.single('logo'),
+  validateExperience,
+  experienceController.create
+);
 
 // PUT /api/v1/experience/:id
 router.put(
   '/:id',
   authenticate,
+  upload.single('logo'),
   validateExperience,
   experienceController.update
 );
